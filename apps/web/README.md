@@ -16,6 +16,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## 教程
+
+  1. 前端创建页面和路径
+  例子创建path： **dashboard**
+  >
+  > - 创建 /app/dashboard/
+  > - 创建 /app/dashboard/layout.tsx
+  > - 创建 /app/dashboard/page.tsx
+然后打开：<http://localhost:3000/dashboard> 即可。
+
+这个例子可以看出，只修改前端代码即可实现。无需后端参与。
+
+
+
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
