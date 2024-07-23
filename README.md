@@ -28,6 +28,8 @@ cp ./apps/web/.env.local.example ./apps/web/.env.local
 pnpm dev
 ```
 
+Following this, you can open `http://localhost:3000` in your browser.
+
 If you want to install the `@nestjs/config` package. In the root of your directory, you can run:
 
 ```sh
@@ -38,3 +40,9 @@ pnpm add @nestjs/config --filter=server
 
 - [Building a full-stack, fully type-safe pnpm monorepo with NestJS, NextJS & tRPC](https://www.tomray.dev/nestjs-nextjs-trpc)
 - [nestjs-prisma](https://www.tomray.dev/nestjs-prisma)
+
+### More docs in this repo
+
+[server/Readme](/apps/server/README.md)
+
+[web/Readme](/apps/web/README.md)
