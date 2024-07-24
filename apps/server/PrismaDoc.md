@@ -1,11 +1,17 @@
 # Tutorial: Prisma
 
+Some importance to use Prisma:
+
 This code requires variable: **DATABASE_URL**. Don't forget to configure it.
 
-## Start DB Browser
+🌚 Avoid editing code within the **migrations** directory. However, it is good practice to track changes to this directory in your Git repository.
+
+## Start DB Browser 📑
 
 ``` shell
 npx prisma studio
+# Prisma schema loaded from prisma/schema.prisma
+# Prisma Studio is up on http://localhost:5555
 ```
 
 ## Re-generate sql file
