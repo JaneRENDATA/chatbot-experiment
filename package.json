@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "packageManager": "pnpm@9.6.0",
   "engines": {
     "node": ">=18",
     "pnpm": ">=8.6.1",
@@ -12,8 +13,10 @@
     "dev": "pnpm run --parallel dev",
     "build:server": "pnpm --filter server build",
     "build:web": "pnpm --filter web build",
+    "build": "pnpm --parallel build",
     "start:server": "pnpm --filter server start:prod",
     "start:web": "pnpm --filter web start",
+    "start": "pnpm --parallel start",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check ."
   },

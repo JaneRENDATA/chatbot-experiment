@@ -9,6 +9,10 @@ async function bootstrap() {
   const trpc = app.get(TrpcRouter);
   trpc.applyMiddleware(app);
 
-  await app.listen(process.env.PORT || 4000);
+  // const port = process.env.PORT;
+  // console.log(`[server]: Server is running at http://localhost:${port}`);
+
+  // await app.listen(process.env.PORT || 4000);
+  await app.listen(4000);
 }
 bootstrap();

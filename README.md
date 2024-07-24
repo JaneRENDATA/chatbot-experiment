@@ -36,6 +36,12 @@ If you want to install the `@nestjs/config` package. In the root of your directo
 pnpm add @nestjs/config --filter=server
 ```
 
+## Deployment
+
+This repo has been tested to run with railway.
+You can fork and open railway to establish:
+[deploy on railway](https://railway.app)
+
 ## 🧚‍♀️ Reference
 
 - [Building a full-stack, fully type-safe pnpm monorepo with NestJS, NextJS & tRPC](https://www.tomray.dev/nestjs-nextjs-trpc)

@@ -3,6 +3,8 @@ import { AppRouter } from '@server/trpc/trpc.router';
 
 const NEXT_PUBLIC_NESTJS_SERVER = process.env.NEXT_PUBLIC_NESTJS_SERVER;
 
+console.log('NEXT_PUBLIC_NESTJS_SERVER: '+NEXT_PUBLIC_NESTJS_SERVER);
+
 if (
   NEXT_PUBLIC_NESTJS_SERVER === undefined ||
   NEXT_PUBLIC_NESTJS_SERVER === ''
