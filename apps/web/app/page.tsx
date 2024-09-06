@@ -15,7 +15,7 @@ export default async function Home() {
     <div className="min-h-screen bg-base-100 text-base-content">
       <main className="container mx-auto px-4">
         {/* Hero Section */}
-        <section className="hero min-h-screen bg-gradient-to-br from-base-300 to-base-100">
+        <section className="hero min-h-screen bg-gradient-to-br from-base-300 to-base-100 rounded-lg">
           <div className="hero-content text-center">
             <div>
               <h1 className="text-5xl font-bold text-primary">InsightAI BI Assistant</h1>
@@ -29,16 +29,17 @@ export default async function Home() {
 
         {/* Features Section */}
         <section className="py-16 border-t border-base-300">
-          <h2 className="text-3xl font-bold text-center mb-8 text-secondary">Data-Centric Approach, Lowering the Bar for Data Analysis</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <h2 className="text-3xl font-bold text-center mb-12 text-secondary">Data-Centric Approach, Lowering the Bar for Data Analysis</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="card bg-base-200 shadow-xl">
-                <figure>
-                  <Image 
-                    src={chartImages[(i - 1) % chartImages.length]} 
-                    alt={`Chart ${i}`} 
-                    width={300} 
-                    height={200} 
+              <div key={i} className="card bg-base-200 shadow-xl rounded-xl overflow-hidden">
+                <figure className="px-6 pt-6">
+                  <Image
+                    src={chartImages[(i - 1) % chartImages.length]}
+                    alt={`Chart ${i}`}
+                    width={300}
+                    height={200}
+                    className="rounded-xl"
                   />
                 </figure>
                 <div className="card-body">
@@ -55,7 +56,7 @@ export default async function Home() {
           <h2 className="text-3xl font-bold text-center mb-8 text-secondary">Application Value</h2>
           <div className="flex flex-wrap justify-center gap-8">
             {['Improved Efficiency', 'Lower Entry Barrier', 'Personalized Analysis'].map((value, index) => (
-              <div key={index} className="card w-96 bg-base-200 shadow-xl">
+              <div key={index} className="card w-96 bg-base-200 shadow-xl rounded-xl">
                 <div className="card-body items-center text-center">
                   <h3 className="card-title text-primary">{value}</h3>
                   <p>Detailed description about {value}.</p>
@@ -87,7 +88,7 @@ export default async function Home() {
                 description: 'Leverage AI to uncover trends, anomalies, and future projections based on your historical data.'
               }
             ].map((useCase, index) => (
-              <div key={index} className="card bg-base-200 shadow-xl">
+              <div key={index} className="card bg-base-200 shadow-xl rounded-xl">
                 <div className="card-body">
                   <h3 className="card-title text-primary">{useCase.title}</h3>
                   <p>{useCase.description}</p>
@@ -107,7 +108,7 @@ export default async function Home() {
               'How is data security ensured?',
               'Are customization options available?'
             ].map((question, index) => (
-              <div key={index} className="collapse collapse-plus bg-base-200">
+              <div key={index} className="collapse collapse-plus bg-base-200 rounded-xl">
                 <input type="radio" name="faq-accordion" />
                 <div className="collapse-title text-xl font-medium text-primary">
                   {question}
@@ -121,14 +122,14 @@ export default async function Home() {
         </section>
       </main>
 
-      <footer className="footer footer-center p-10 bg-base-200 text-base-content rounded">
+      <footer className="footer footer-center p-10 bg-base-200 text-base-content rounded-lg">
         <div className="grid grid-flow-col gap-4">
           <a className="link link-hover">About Us</a>
           <a className="link link-hover">Contact</a>
           <a className="link link-hover">Privacy Policy</a>
         </div>
         <div>
-          <p>Copyright © 2023 - All rights reserved by InsightAI</p>
+          <p>Copyright © 2023 - All rights reserved by Chatbi team</p>
         </div>
       </footer>
     </div>
