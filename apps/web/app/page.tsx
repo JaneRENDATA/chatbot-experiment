@@ -44,14 +44,26 @@ export default function Home() {
     <div className="min-h-screen text-base-content">
       <main className="container mx-auto px-4">
         {/* Hero Section */}
-        <section className="hero min-h-screen bg-gradient-to-br from-base-300 to-base-100 rounded-lg">
-          <div className="hero-content text-center">
-            <div>
-              <h1 className="text-5xl font-bold text-primary">InsightAI BI Assistant</h1>
-              <p className="py-6 text-accent">
-                Introducing InsightAI, a cutting-edge intelligent analysis tool providing an all-in-one data analysis solution.
+        <section className="hero min-h-screen-minus-header relative">
+          <div className="absolute inset-0 left-[50%] right-[50%] mx-[-50vw] z-0">
+            <img src="/LooperBG.png" alt="Background" className="w-full h-full object-cover" />
+          </div>
+          <div className="hero-content text-center z-10 relative">
+            <div className="max-w-3xl">
+              <h1 className="text-6xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 text-transparent bg-clip-text animate-gradient-x">
+                  Chat BI.
+                </span>
+              </h1>
+              <h2 className="text-6xl font-bold mb-8 text-white">Business AI.</h2>
+              <p className="text-xl mb-12 text-white">
+                No need to develop much more features to analyze your data.
+                Use ChatIt to automate your data analysis and have one-click report.
               </p>
-              <button className="btn btn-primary" onClick={handleTryNow}>Try Now</button>
+              <div className="flex justify-center space-x-4">
+                <button className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded-full" onClick={handleTryNow}>Try now</button>
+                {/* <button className="btn btn-secondary bg-gray-300 text-black hover:bg-gray-400">Ecosystems</button> */}
+              </div>
             </div>
           </div>
         </section>

@@ -12,6 +12,11 @@ module.exports = {
   daisyui: {
     themes: [
       {
+        extend: {
+          animation: {
+            'gradient-x': 'gradient-x 3s ease infinite',
+          },
+        },
         techDark: {
           ...require("daisyui/src/theming/themes")["[data-theme=cyberpunk]"],
           "primary": "#00ff9f",

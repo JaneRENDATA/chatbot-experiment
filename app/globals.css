@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Override DaisyUI button styles */
+@layer components {
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-accent,
+  .btn-info,
+  .btn-success,
+  .btn-warning,
+  .btn-error,
+  .btn-ghost {
+    text-transform: none !important;
+  }
+}
+
+/* Add this new class */
+.min-h-screen-minus-header {
+  min-height: calc(100vh - 4rem); /* Assuming your header is 4rem tall, adjust if different */
+}
