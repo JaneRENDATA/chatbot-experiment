@@ -1,12 +1,15 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import dynamic from 'next/dynamic';
+
+const Header = dynamic(() => import('./components/Header'), { ssr: false });
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'InsightAI BI Assistant',
-  keywords: 'BI, Data Analysis, AI Assistant, InsightAI',
+  title: 'Chat BI',
+  keywords: 'BI, Data Analysis, AI Assistant, InsightAI for your business',
   description: 'InsightAI introduces a cutting-edge intelligent analysis tool, providing an all-in-one data analysis solution.',
 };
 
@@ -17,7 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="techDark">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} bg-gradient-to-br from-gray-900 via-blue-900 to-blue-800 min-h-screen`}>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }

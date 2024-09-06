@@ -34,7 +34,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-base-100 text-base-content">
+    <div className="min-h-screen text-base-content">
       <main className="container mx-auto px-4">
         {/* Hero Section */}
         <section className="hero min-h-screen bg-gradient-to-br from-base-300 to-base-100 rounded-lg">
@@ -75,13 +75,30 @@ export default function Home() {
 
         {/* Application Value Section */}
         <section className="py-16 border-t border-base-300">
-          <h2 className="text-3xl font-bold text-center mb-8 text-secondary">Application Value</h2>
-          <div className="flex flex-wrap justify-center gap-8">
-            {['Improved Efficiency', 'Lower Entry Barrier', 'Personalized Analysis'].map((value, index) => (
-              <div key={index} className="card w-96 bg-base-200 shadow-xl rounded-xl">
+          <h2 className="text-3xl font-bold text-center mb-8 text-secondary">Why Choose ChatBI?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              {
+                title: 'Intuitive Data Interaction',
+                description: 'Engage with your data through natural language queries, making complex analysis accessible to all team members, regardless of their technical expertise.'
+              },
+              {
+                title: 'Real-time Insights',
+                description: 'Get instant answers and visualizations as you chat, enabling faster decision-making and reducing the time from question to insight.'
+              },
+              {
+                title: 'AI-Powered Analytics',
+                description: 'Leverage advanced machine learning algorithms that understand context, suggest relevant analyses, and uncover hidden patterns in your data.'
+              },
+              {
+                title: 'Seamless Integration',
+                description: 'Easily connect with your existing data sources and tools, allowing for a smooth incorporation of ChatBI into your current workflow and processes.'
+              }
+            ].map((value, index) => (
+              <div key={index} className="card bg-base-200 shadow-xl rounded-xl">
                 <div className="card-body items-center text-center">
-                  <h3 className="card-title text-primary">{value}</h3>
-                  <p>Detailed description about {value}.</p>
+                  <h3 className="card-title text-primary">{value.title}</h3>
+                  <p>{value.description}</p>
                 </div>
               </div>
             ))}
