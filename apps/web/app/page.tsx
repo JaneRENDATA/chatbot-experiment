@@ -44,7 +44,8 @@ export default function Home() {
     <div className="min-h-screen text-base-content">
       <main className="container mx-auto px-4">
         {/* Hero Section */}
-        <section className="hero min-h-screen-minus-header relative">
+
+        <section className="hero min-h-screen relative">
           <div className="absolute inset-0 left-[50%] right-[50%] mx-[-50vw] z-0">
             <img src="/LooperBG.png" alt="Background" className="w-full h-full object-cover" />
           </div>

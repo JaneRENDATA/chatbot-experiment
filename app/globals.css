@@ -16,8 +16,3 @@
     text-transform: none !important;
   }
 }
-
-/* Add this new class */
-.min-h-screen-minus-header {
-  min-height: calc(100vh - 4rem); /* Assuming your header is 4rem tall, adjust if different */
-}
