@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Loading: React.FC = () => {
+const loadingComponent: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-base-100 bg-opacity-50">
       <div className="text-center">
@@ -11,4 +11,4 @@ const Loading: React.FC = () => {
   );
 };
 
-export default Loading;
+export default loadingComponent;

@@ -43,13 +43,13 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
           <a className={`tab rounded-md ${activeTab === 'web' ? 'tab-active' : ''}`} onClick={() => setActiveTab('web')}>Web Scraping</a>
         </div>
         {activeTab === 'file' && (
-          <input type="file" className="file-input file-input-bordered w-full rounded-md" onChange={(e) => setFile(e.target.files?.[0] || null)} accept=".xlsx,.pdf,.csv,.json,.txt" />
+          <input type="file" className="file-input file-input-bordered w-full rounded-md" onChange={(event) => setFile(event.target.files?.[0] || null)} accept=".xlsx,.pdf,.csv,.json,.txt" />
         )}
         {activeTab === 'sql' && (
-          <input type="text" placeholder="Enter SQL connection string" className="input input-bordered w-full rounded-md" value={sqlConnection} onChange={(e) => setSqlConnection(e.target.value)} />
+          <input type="text" placeholder="Enter SQL connection string" className="input input-bordered w-full rounded-md" value={sqlConnection} onChange={(event) => setSqlConnection(event.target.value)} />
         )}
         {activeTab === 'web' && (
-          <input type="url" placeholder="Enter website URL" className="input input-bordered w-full rounded-md" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} />
+          <input type="url" placeholder="Enter website URL" className="input input-bordered w-full rounded-md" value={websiteUrl} onChange={(event) => setWebsiteUrl(event.target.value)} />
         )}
         <div className="mt-4 flex justify-end space-x-2">
           <button className="btn btn-ghost rounded-md" onClick={onClose}>Cancel</button>

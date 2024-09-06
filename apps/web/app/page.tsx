@@ -11,6 +11,13 @@ const chartImages = [
   '/charts/Chart03.png',
 ];
 
+type SubmitData = {
+  type: 'file' | 'sql' | 'web';
+  file?: File;
+  connection?: string;
+  url?: string;
+};
+
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,9 +30,9 @@ export default function Home() {
     setIsModalOpen(false);
   }, []);
 
-  const handleSubmit = useCallback((data: any) => {
+  const handleSubmit = useCallback((data: SubmitData) => {
     setIsLoading(true);
-    // 模拟API调用
+    // Simulating API call
     setTimeout(() => {
       setIsLoading(false);
       setIsModalOpen(false);
