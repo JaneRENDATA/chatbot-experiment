@@ -59,7 +59,8 @@ export default function Home() {
               <h2 className="text-6xl font-bold mb-8 text-white">Business AI.</h2>
               <p className="text-xl mb-12 text-white">
                 No need to develop much more features to analyze your data.
-                Use ChatIt to automate your data analysis and have one-click report.
+                <br />
+                Use ChatBI to automate your data analysis and have one-click report.
               </p>
               <div className="flex justify-center space-x-4">
                 <button className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded-full" onClick={handleTryNow}>Try now</button>
