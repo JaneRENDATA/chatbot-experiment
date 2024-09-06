@@ -1,5 +1,11 @@
-// import { trpc } from '@web/app/trpc';
 import Image from 'next/image';
+
+// Add this array at the top of your file, outside the component
+const chartImages = [
+  '/charts/Chart01.png',
+  '/charts/Chart02.png',
+  '/charts/Chart03.png',
+];
 
 export default async function Home() {
   // const { users } = await trpc.getUsers.query();
@@ -28,7 +34,12 @@ export default async function Home() {
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="card bg-base-200 shadow-xl">
                 <figure>
-                  <Image src={`https://picsum.photos/seed/${i}/300/200`} alt={`Chart ${i}`} width={300} height={200} />
+                  <Image 
+                    src={chartImages[(i - 1) % chartImages.length]} 
+                    alt={`Chart ${i}`} 
+                    width={300} 
+                    height={200} 
+                  />
                 </figure>
                 <div className="card-body">
                   <h3 className="card-title text-primary">Data Analysis Chart {i}</h3>
