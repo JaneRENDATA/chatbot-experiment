@@ -1,4 +1,8 @@
+'use client';
+
+import { useState, useCallback } from 'react';
 import Image from 'next/image';
+import DataSourceSelector from './components/DataSourceSelector';
 
 // Add this array at the top of your file, outside the component
 const chartImages = [
@@ -7,9 +11,27 @@ const chartImages = [
   '/charts/Chart03.png',
 ];
 
-export default async function Home() {
-  // const { users } = await trpc.getUsers.query();
-  // const { greeting } = await trpc.sayHello.query({ name: 'Bruce' });
+export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTryNow = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  const handleSubmit = useCallback((data: any) => {
+    setIsLoading(true);
+    // 模拟API调用
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsModalOpen(false);
+      console.log('Submitted data:', data);
+    }, 2000);
+  }, []);
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content">
@@ -22,7 +44,7 @@ export default async function Home() {
               <p className="py-6 text-accent">
                 Introducing InsightAI, a cutting-edge intelligent analysis tool providing an all-in-one data analysis solution.
               </p>
-              <button className="btn btn-primary">Try Now</button>
+              <button className="btn btn-primary" onClick={handleTryNow}>Try Now</button>
             </div>
           </div>
         </section>
@@ -132,6 +154,8 @@ export default async function Home() {
           <p>Copyright © 2023 - All rights reserved by Chatbi team</p>
         </div>
       </footer>
+
+      <DataSourceSelector isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmit} isLoading={isLoading} />
     </div>
   );
 }
