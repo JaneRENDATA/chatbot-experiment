@@ -17,6 +17,8 @@
       "@web/*": [
         "./apps/web/*"
       ]
-    }
+    },
+    "esModuleInterop": true,
+    "strict": true
   }
 }

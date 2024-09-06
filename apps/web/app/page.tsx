@@ -1,8 +1,9 @@
-import { trpc } from '@web/app/trpc';
+// import { trpc } from '@web/app/trpc';
+import Image from 'next/image';
 
 export default async function Home() {
-  const { users } = await trpc.getUsers.query();
-  const { greeting } = await trpc.sayHello.query({ name: 'Bruce' });
+  // const { users } = await trpc.getUsers.query();
+  // const { greeting } = await trpc.sayHello.query({ name: 'Bruce' });
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content">
@@ -26,7 +27,9 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="card bg-base-200 shadow-xl">
-                <figure><img src={`https://picsum.photos/seed/${i}/300/200`} alt="Chart" /></figure>
+                <figure>
+                  <Image src={`https://picsum.photos/seed/${i}/300/200`} alt={`Chart ${i}`} width={300} height={200} />
+                </figure>
                 <div className="card-body">
                   <h3 className="card-title text-primary">Data Analysis Chart {i}</h3>
                   <p>Brief description of data analysis chart {i}.</p>
@@ -94,36 +97,25 @@ export default async function Home() {
               'Are customization options available?'
             ].map((question, index) => (
               <div key={index} className="collapse collapse-plus bg-base-200">
-                <input type="radio" name="faq-accordion" /> 
+                <input type="radio" name="faq-accordion" />
                 <div className="collapse-title text-xl font-medium text-primary">
                   {question}
                 </div>
-                <div className="collapse-content"> 
-                  <p>Detailed answer to "{question}".</p>
+                <div className="collapse-content">
+                  <p>Detailed answer to &quot;{question}&quot;.</p>
                 </div>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Debug Section */}
-        <section className="py-16 border-t border-base-300">
-          <h2 className="text-3xl font-bold text-center mb-8 text-secondary">Debug Information</h2>
-          <div className="space-y-4">
-            <h4 className="text-primary">{'Greeting from backend API:'}</h4>
-            <div>{greeting}</div>
-            <h4 className="text-primary">{'Users from Database:'}</h4>
-            <div>{JSON.stringify(users)}</div>
           </div>
         </section>
       </main>
 
       <footer className="footer footer-center p-10 bg-base-200 text-base-content rounded">
         <div className="grid grid-flow-col gap-4">
-          <a className="link link-hover">About Us</a> 
-          <a className="link link-hover">Contact</a> 
+          <a className="link link-hover">About Us</a>
+          <a className="link link-hover">Contact</a>
           <a className="link link-hover">Privacy Policy</a>
-        </div> 
+        </div>
         <div>
           <p>Copyright © 2023 - All rights reserved by InsightAI</p>
         </div>
