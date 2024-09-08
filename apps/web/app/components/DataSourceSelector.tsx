@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 import React, { useState, useCallback } from 'react';
-import { TrashIcon } from '@heroicons/react/24/outline';
 import { uploadDocument } from '../services/uploadService';
 import { UploadResponse } from '../models/api';
 import Chatbox from './Chatbox';
@@ -41,10 +40,6 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
     setUploadedLibId(null);
     onClose();
   };
-
-  const handleClearChat = useCallback(() => {
-    setUploadedLibId(null);
-  }, []);
 
   if (!isOpen) return null;
 
