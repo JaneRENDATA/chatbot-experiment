@@ -16,6 +16,11 @@ interface IChatboxProps {
 
 // Add this type definition for the code component props
 
+// Add this interface for ChatMessage
+interface ChatMessage {
+    role: string;
+    content: string;
+}
 
 const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
     const initialMessage: IMessage = {
@@ -49,7 +54,16 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
 
         let aiResponse = '';
         try {
-            const stream = await chatWithAI(libId, input);
+            // Format messages for the API
+            const chatMessages: ChatMessage[] = messages
+                .filter(msg => !msg.isSystem)
+                .map(msg => ({
+                    role: msg.isUser ? 'user' : 'assistant',
+                    content: msg.text
+                }));
+            chatMessages.push({ role: 'user', content: input });
+
+            const stream = await chatWithAI(libId, chatMessages);
             const reader = stream.getReader();
 
             while (true) {

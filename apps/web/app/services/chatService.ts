@@ -1,12 +1,17 @@
 import { CHAT_BASE_URL, CHAT_ENDPOINT } from '../../../../libs/shared/config/constants';
 
-export const chatWithAI = async (libId: string, message: string): Promise<ReadableStream> => {
+interface ChatMessage {
+  role: string;
+  content: string;
+}
+
+export const chatWithAI = async (libId: string, messages: ChatMessage[]): Promise<ReadableStream> => {
   const response = await fetch(`${CHAT_BASE_URL}${CHAT_ENDPOINT}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
     },
-    body: new URLSearchParams({ lib_id: libId, message }),
+    body: JSON.stringify({ lib_id: libId, messages }),
   });
 
   if (!response.ok) {
