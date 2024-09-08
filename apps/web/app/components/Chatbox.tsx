@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { chatWithAI } from '../services/chatService';
 
 interface IMessage {
@@ -11,6 +14,14 @@ interface IMessage {
 
 interface IChatboxProps {
     libId: string;
+}
+
+// Add this type definition for the code component props
+interface CodeProps {
+    node?: any;
+    inline?: boolean;
+    className?: string;
+    children: React.ReactNode;
 }
 
 const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
@@ -82,10 +93,37 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
                         <div className={`max-w-[80%] p-3 rounded-lg ${message.isSystem
                             ? 'bg-gray-200 text-gray-600'
                             : message.isUser
-                                ? 'bg-primary text-primary-content'
-                                : 'bg-secondary text-secondary-content'
+                                ? 'bg-blue-500 text-white'  // Changed from 'bg-yellow-200 text-black-800'
+                                : 'bg-primary text-primary-content'
                             }`}>
-                            {message.text}
+                            {message.isUser || message.isSystem ? (
+                                message.text
+                            ) : (
+                                <ReactMarkdown
+                                    className="prose prose-sm max-w-none"
+                                    components={{
+                                        code({ node, inline, className, children, ...props }: CodeProps) {
+                                            const match = /language-(\w+)/.exec(className || '')
+                                            return !inline && match ? (
+                                                <SyntaxHighlighter
+                                                    style={tomorrow}
+                                                    language={match[1]}
+                                                    PreTag="div"
+                                                    {...props}
+                                                >
+                                                    {String(children).replace(/\n$/, '')}
+                                                </SyntaxHighlighter>
+                                            ) : (
+                                                <code className={className} {...props}>
+                                                    {children}
+                                                </code>
+                                            )
+                                        }
+                                    }}
+                                >
+                                    {message.text}
+                                </ReactMarkdown>
+                            )}
                         </div>
                     </div>
                 ))}
