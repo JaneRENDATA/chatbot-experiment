@@ -11,33 +11,16 @@ const chartImages = [
   '/charts/Chart03.png',
 ];
 
-type SubmitData = {
-  type: 'file' | 'sql' | 'web';
-  file?: File;
-  connection?: string;
-  url?: string;
-};
-
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleTryNow = useCallback(() => {
     setIsModalOpen(true);
   }, []);
 
   const handleCloseModal = useCallback(() => {
+    console.warn('handleCloseModal.');
     setIsModalOpen(false);
-  }, []);
-
-  const handleSubmit = useCallback((data: SubmitData) => {
-    setIsLoading(true);
-    // Simulating API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsModalOpen(false);
-      console.log('Submitted data:', data);
-    }, 2000);
   }, []);
 
   return (
@@ -47,7 +30,7 @@ export default function Home() {
 
         <section className="hero min-h-screen relative">
           <div className="absolute inset-0 left-[50%] right-[50%] mx-[-50vw] z-0">
-            <img src="/LooperBG.png" alt="Background" className="w-full h-full object-cover" />
+            <Image src="/LooperBG.png" alt="Background" layout="fill" objectFit="cover" />
           </div>
           <div className="hero-content text-center z-10 relative">
             <div className="max-w-3xl">
@@ -193,7 +176,7 @@ export default function Home() {
         </div>
       </footer>
 
-      <DataSourceSelector isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmit} isLoading={isLoading} />
+      <DataSourceSelector isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

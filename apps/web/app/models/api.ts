@@ -1,11 +1,11 @@
-export interface ApiResponse<T> {
+export interface IApiResponse<T> {
   code: number;
   message: string;
   data: T;
 }
 
-export interface UploadResponseData {
+export interface IUploadResponseData {
   lib_id: string;
 }
 
-export type UploadResponse = ApiResponse<UploadResponseData>;
+export type UploadResponse = IApiResponse<IUploadResponseData>;

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 import React, { useState, useCallback } from 'react';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import { uploadDocument } from '../services/uploadService';
 import { UploadResponse } from '../models/api';
 import Chatbox from './Chatbox';
@@ -8,11 +9,9 @@ import Chatbox from './Chatbox';
 interface DataSourceSelectorProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
-  isLoading: boolean;
 }
 
-const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose, onSubmit, isLoading: externalLoading }) => {
+const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('file');
   const [file, setFile] = useState<File | null>(null);
   const [sqlConnection, setSqlConnection] = useState('');
@@ -26,7 +25,6 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
       try {
         const response: UploadResponse = await uploadDocument(file);
         setUploadedLibId(response.data.lib_id);
-        onSubmit({ type: 'file', lib_id: response.data.lib_id });
       } catch (error) {
         console.error('File upload failed:', error);
         // Handle error (e.g., show an error message to the user)
@@ -35,22 +33,24 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
       }
     } else {
       // Handle other tabs as before
-      // ...
+      console.log('Submitted data:', { type: activeTab, sqlConnection, websiteUrl });
     }
-  }, [activeTab, file, sqlConnection, websiteUrl, onSubmit]);
+  }, [activeTab, file, sqlConnection, websiteUrl]);
 
   const handleClose = () => {
     setUploadedLibId(null);
     onClose();
   };
 
-  const isLoading = externalLoading || isUploading;
+  const handleClearChat = useCallback(() => {
+    setUploadedLibId(null);
+  }, []);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-base-200 rounded-lg p-8 w-full max-w-4xl">
+      <div className="bg-base-200 rounded-lg p-6 w-full max-w-4xl">
         {!uploadedLibId ? (
           <>
             <h2 className="text-2xl font-bold mb-4 text-primary">Choose Data Source</h2>
@@ -70,8 +70,8 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
             )}
             <div className="mt-4 flex justify-end space-x-2">
               <button className="btn btn-ghost rounded-md" onClick={handleClose}>Cancel</button>
-              <button className="btn btn-primary rounded-md" onClick={handleSubmit} disabled={isLoading}>
-                {isLoading ? <span className="loading loading-spinner"></span> : 'Submit'}
+              <button className="btn btn-primary rounded-md" onClick={handleSubmit} disabled={isUploading}>
+                {isUploading ? <span className="loading loading-spinner"></span> : 'Submit'}
               </button>
             </div>
           </>
