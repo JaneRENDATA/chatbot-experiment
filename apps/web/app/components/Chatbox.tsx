@@ -195,7 +195,7 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
     };
 
     return (
-        <div className="flex flex-col h-[600px] w-full mx-auto bg-base-300 rounded-lg shadow-lg relative">
+        <div className="flex flex-col h-full w-full mx-auto bg-base-300 rounded-lg shadow-lg relative">
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
                 {messages.map((message) => (
                     <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
@@ -226,7 +226,7 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
                     </div>
                 </>
             )}
-            <form onSubmit={handleSubmit} className="bg-base-300 rounded-b-lg">
+            <form onSubmit={handleSubmit} className="bg-base-300 rounded-b-lg p-2">
                 <div className="flex space-x-2">
                     <input
                         type="text"

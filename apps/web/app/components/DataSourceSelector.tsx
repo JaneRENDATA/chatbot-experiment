@@ -45,7 +45,8 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-base-200 rounded-lg p-6 w-full max-w-4xl">
+      <div className={`bg-base-200 rounded-lg p-6 w-full max-w-4xl relative ${uploadedLibId ? 'h-[90vh]' : ''}`}>
+        <button className="btn btn-ghost rounded-md absolute top-2 right-2" onClick={handleClose}>Close</button>
         {!uploadedLibId ? (
           <>
             <h2 className="text-2xl font-bold mb-4 text-primary">Choose Data Source</h2>
@@ -64,20 +65,18 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
               <input type="url" placeholder="Enter website URL" className="input input-bordered w-full rounded-md" value={websiteUrl} onChange={(event) => setWebsiteUrl(event.target.value)} />
             )}
             <div className="mt-4 flex justify-end space-x-2">
-              <button className="btn btn-ghost rounded-md" onClick={handleClose}>Cancel</button>
               <button className="btn btn-primary rounded-md" onClick={handleSubmit} disabled={isUploading}>
                 {isUploading ? <span className="loading loading-spinner"></span> : 'Submit'}
               </button>
             </div>
           </>
         ) : (
-          <>
+          <div className="h-full flex flex-col">
             <h2 className="text-2xl font-bold mb-4 text-primary">Chat with AI</h2>
-            <Chatbox libId={uploadedLibId} />
-            <div className="mt-4 flex justify-end">
-              <button className="btn btn-ghost rounded-md" onClick={handleClose}>Close</button>
+            <div className="flex-grow overflow-hidden">
+              <Chatbox libId={uploadedLibId} />
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
