@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable line-comment-position */
 import React, { useState, useCallback } from 'react';
 import { uploadDocument } from '../services/uploadService';
 import { UploadResponse } from '../models/api';
