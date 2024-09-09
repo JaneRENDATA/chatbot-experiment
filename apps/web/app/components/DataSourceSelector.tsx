@@ -17,6 +17,7 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedLibId, setUploadedLibId] = useState<string | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
   const handleSubmit = useCallback(async () => {
     if (activeTab === 'file' && file) {
@@ -24,6 +25,7 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
       try {
         const response: UploadResponse = await uploadDocument(file);
         setUploadedLibId(response.data.lib_id);
+        setUploadedFileName(file.name);  // Save the file name
       } catch (error) {
         console.error('File upload failed:', error);
         // Handle error (e.g., show an error message to the user)
@@ -74,7 +76,7 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
           <div className="h-full flex flex-col">
             <h2 className="text-2xl font-bold mb-4 text-primary">Chat with AI</h2>
             <div className="flex-grow overflow-hidden">
-              <Chatbox libId={uploadedLibId} />
+              <Chatbox libId={uploadedLibId} fileName={uploadedFileName} />
             </div>
           </div>
         )}

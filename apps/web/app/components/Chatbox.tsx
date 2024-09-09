@@ -13,6 +13,7 @@ interface IMessage {
 
 interface IChatboxProps {
     libId: string;
+    fileName: string | null;
 }
 
 // Add this type definition for the code component props
@@ -23,10 +24,10 @@ interface ChatMessage {
     content: string;
 }
 
-const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
+const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName }) => {
     const initialMessage: IMessage = {
         id: 0,
-        text: `Your library ID is: ${libId}. Please input anything you want to ask about your data.`,
+        text: `${fileName ? `Uploaded file: **${fileName}**\n\n` : ''}Your library ID is: **${libId}**.\n\nPlease input anything you want to ask about your data.`,
         isUser: false,
         isSystem: true
     };
@@ -171,24 +172,22 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
 
         return (
             <>
-                {message.isUser || message.isSystem ? (
+                {message.isUser ? (
                     cleanedText
                 ) : (
-                    <>
-                        <Markdown value={cleanedText} />
-                        {vegaSpec && (
-                            <div 
-                                ref={vegaContainerRef} 
-                                className="mt-4 w-full" 
-                                style={{
-                                    maxWidth: '90%',
-                                    overflow: 'hidden',
-                                    minHeight: '350px', // 减小最小高度
-                                    maxHeight: '600px'  // 减小最大高度
-                                }}
-                            />
-                        )}
-                    </>
+                    <Markdown value={cleanedText} />
+                )}
+                {vegaSpec && (
+                    <div 
+                        ref={vegaContainerRef} 
+                        className="mt-4 w-full" 
+                        style={{
+                            maxWidth: '90%',
+                            overflow: 'hidden',
+                            minHeight: '350px',
+                            maxHeight: '600px'
+                        }}
+                    />
                 )}
             </>
         );
