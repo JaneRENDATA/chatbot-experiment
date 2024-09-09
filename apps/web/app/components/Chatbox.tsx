@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { chatWithAI } from '../services/chatService';
 import Markdown from './Markdown';
+import vegaEmbed from 'vega-embed';
 
 interface IMessage {
     id: number;
@@ -70,11 +71,20 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
                 const { done, value } = await reader.read();
                 if (done) break;
                 const text = new TextDecoder().decode(value);
-                const lines = text.split('\n\n');
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        aiResponse += line.slice(6);
-
+                const lines = text.split('\n\n').filter(line => line.trim() !== '');
+                
+                if (lines.length === 0) {
+                    // 如果没有有效的行，直接添加整个文本
+                    aiResponse += text;
+                    const aiMsg = { id: Date.now(), text: aiResponse, isUser: false }
+                    setMessages(prev => [...prev.slice(0, -1), aiMsg]);
+                } else {
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            aiResponse += line.slice(6);
+                        } else {
+                            aiResponse += line;
+                        }
                         const aiMsg = { id: Date.now(), text: aiResponse, isUser: false }
                         setMessages(prev => [...prev.slice(0, -1), aiMsg]);
                     }
@@ -92,6 +102,98 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
         setMessages([initialMessage]);
     };
 
+    const renderVegaLite = useCallback((container: HTMLDivElement, spec: any) => {
+        if (!container) return;
+        
+        const containerWidth = container.clientWidth;
+        if (containerWidth === 0) {
+            setTimeout(() => renderVegaLite(container, spec), 100);
+            return;
+        }
+
+        const adjustedSpec = {
+            ...spec,
+            width: 'container',
+            height: 'container',
+            autosize: {
+                type: 'fit',
+                contains: 'padding'
+            }
+        };
+
+        const chartWidth = containerWidth;
+        const chartHeight = Math.min(300, containerWidth * 0.5); // 将高度设置为宽度的一半，但不超过300px
+
+        vegaEmbed(container, adjustedSpec, { 
+            actions: false,
+            renderer: 'svg',
+            width: chartWidth,
+            height: chartHeight
+        }).catch(console.error);
+    }, []);
+
+    const MessageContent: React.FC<{ message: IMessage }> = ({ message }) => {
+        const vegaContainerRef = useRef<HTMLDivElement>(null);
+        const [vegaSpec, setVegaSpec] = useState<any>(null);
+        const [cleanedText, setCleanedText] = useState(message.text);
+
+        useEffect(() => {
+            const chartDataRegex = /CHART_DATA:\{.*?\}END_CHART_DATA/s;
+            const vegaLiteRegex = /VEGALITE_BEGIN:(.*?)VEGALITE_END/s;
+
+            let newCleanedText = message.text.replace(chartDataRegex, '');
+            newCleanedText = newCleanedText.replace(vegaLiteRegex, '');
+            setCleanedText(newCleanedText.trim());
+
+            const vegaMatch = message.text.match(vegaLiteRegex);
+            if (vegaMatch) {
+                try {
+                    const spec = JSON.parse(vegaMatch[1]);
+                    // 移除原始规范中的width和height
+                    const { width, height, ...restSpec } = spec;
+                    setVegaSpec(restSpec);
+                } catch (error) {
+                    console.error('Failed to parse Vega-Lite spec:', error);
+                }
+            }
+        }, [message.text]);
+
+        useEffect(() => {
+            if (vegaContainerRef.current && vegaSpec) {
+                const resizeObserver = new ResizeObserver(() => {
+                    renderVegaLite(vegaContainerRef.current!, vegaSpec);
+                });
+                resizeObserver.observe(vegaContainerRef.current);
+                renderVegaLite(vegaContainerRef.current, vegaSpec);
+                return () => resizeObserver.disconnect();
+            }
+        }, [vegaSpec, renderVegaLite]);
+
+        return (
+            <>
+                {message.isUser || message.isSystem ? (
+                    cleanedText
+                ) : (
+                    <>
+                        <Markdown value={cleanedText} />
+                        {vegaSpec && (
+                            <div 
+                                ref={vegaContainerRef} 
+                                className="mt-4 w-full" 
+                                style={{
+                                    maxWidth: '90%',
+                                    overflow: 'hidden',
+                                    minHeight: '350px', // 减小最小高度
+                                    maxHeight: '600px'  // 减小最大高度
+                                }}
+                            />
+                        )}
+                    </>
+                )}
+            </>
+        );
+    };
+
     return (
         <div className="flex flex-col h-[600px] w-full mx-auto bg-base-300 rounded-lg shadow-lg relative">
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
@@ -103,11 +205,7 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId }) => {
                                 ? 'bg-blue-500 text-white'
                                 : 'bg-primary text-primary-content'
                             }`}>
-                            {message.isUser || message.isSystem ? (
-                                message.text
-                            ) : (
-                                <Markdown value={message.text} />
-                            )}
+                            <MessageContent message={message} />
                         </div>
                     </div>
                 ))}

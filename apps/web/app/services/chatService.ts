@@ -6,6 +6,10 @@ interface ChatMessage {
 }
 
 export const chatWithAI = async (libId: string, messages: ChatMessage[]): Promise<ReadableStream> => {
+
+  // to print msgs.
+  console.log('Chat messages:', JSON.stringify(messages));
+
   const response = await fetch(`${CHAT_BASE_URL}${CHAT_ENDPOINT}`, {
     method: 'POST',
     headers: {
