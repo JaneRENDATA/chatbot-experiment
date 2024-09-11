@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "CI=false next build",
     "old_start": "next start",
-    "start": "NODE_OPTIONS='--max-old-space-size=1024 --optimize-for-size' next start -p ${PORT:-3000}",
+    "start": "NODE_OPTIONS='--max-old-space-size=512' next start -p ${PORT:-3000}",
     "lint": "next lint"
   },
   "dependencies": {
