@@ -10,6 +10,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { chatWithAI } from '../services/chatService';
 import Markdown from './Markdown';
 import vegaEmbed from 'vega-embed';
+import { ChatRoles, ChatRole } from '../config/chatroles';
 
 interface IMessage {
   id: number;
@@ -22,6 +23,7 @@ interface IChatboxProps {
   libId: string;
   fileName: string | null;
   scrapedUrl: string | null;
+  role: ChatRole; // Add this line
 }
 
 // Add this type definition for the code component props
@@ -32,7 +34,7 @@ interface ChatMessage {
   content: string;
 }
 
-const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName, scrapedUrl }) => {
+const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName, scrapedUrl, role: initialRole }) => {
   let secondLine = fileName && `Uploaded file: **${fileName}**` || '';
   secondLine = scrapedUrl ? `Scraped URL: **${scrapedUrl}**` : secondLine;
   secondLine += '\n\n';
@@ -48,6 +50,7 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName, scrapedUrl }) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [currentRole, setCurrentRole] = useState<ChatRole>(initialRole);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -77,7 +80,7 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName, scrapedUrl }) => {
         }));
       chatMessages.push({ role: 'user', content: input });
 
-      const stream = await chatWithAI(libId, chatMessages);
+      const stream = await chatWithAI(libId, chatMessages, currentRole);
       const reader = stream.getReader();
 
       while (true) {
@@ -205,8 +208,37 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName, scrapedUrl }) => {
     );
   };
 
+  const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrentRole(event.target.value as ChatRole);
+  };
+
   return (
     <div className="flex flex-col h-full w-full mx-auto bg-base-300 rounded-lg shadow-lg relative">
+      <div className="p-2 bg-base-200 rounded-t-lg flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <label htmlFor="role-select" className="text-sm font-medium text-gray-700">Role:</label>
+          <select
+            id="role-select"
+            value={currentRole}
+            onChange={handleRoleChange}
+            className="select select-bordered select-sm"
+          >
+            {Object.entries(ChatRoles).map(([key, value]) => (
+              <option key={key} value={value}>{key}</option>
+            ))}
+          </select>
+        </div>
+        {messages.length > 1 && (
+          <button
+            onClick={handleClearChat}
+            className="btn btn-ghost btn-sm text-warning hover:bg-warning hover:bg-opacity-20 px-1"
+            title="Clear chat"
+          >
+            <TrashIcon className="h-5 w-5 mr-1 text-warning" />
+            <span className="text-warning">Clear Chat</span>
+          </button>
+        )}
+      </div>
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
@@ -222,21 +254,6 @@ const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName, scrapedUrl }) => {
         ))}
         <div ref={messagesEndRef} />
       </div>
-      {messages.length > 1 && (
-        <>
-          <div className="divider m-0"></div>
-          <div className="flex justify-center mb-1 px-1">
-            <button
-              onClick={handleClearChat}
-              className="btn btn-ghost btn-sm text-warning hover:bg-warning hover:bg-opacity-20 px-1"
-              title="Clear chat"
-            >
-              <TrashIcon className="h-5 w-5 mr-1 text-warning" />
-              <span className="text-warning">Clear Chat</span>
-            </button>
-          </div>
-        </>
-      )}
       <form onSubmit={handleSubmit} className="bg-base-300 rounded-b-lg p-2">
         <div className="flex space-x-2">
           <input

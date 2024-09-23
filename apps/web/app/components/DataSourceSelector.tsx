@@ -7,6 +7,7 @@ import { scrapeWebsite } from '../services/scrapingService'; // Import scraping 
 import { checkTaskState } from '../services/taskService'; // Import task service
 import { UploadResponse } from '../models/api';
 import Chatbox from './Chatbox';
+import { ChatRoles } from '../config/chatroles';
 
 interface DataSourceSelectorProps {
   isOpen: boolean;
@@ -91,6 +92,16 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
     onClose();
   };
 
+  const getChatRole = () => {
+    if (scrapedUrl) {
+      return ChatRoles.CUSTOMER_SUPPORT;
+    }else if (uploadedFileName) {
+      return ChatRoles.DATA_SCIENTIST;
+    }
+    // Default role if neither file nor URL is present
+    return ChatRoles.SMART_PRODUCT_ASSISTANT;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -129,7 +140,12 @@ const DataSourceSelector: React.FC<DataSourceSelectorProps> = ({ isOpen, onClose
               </div>
             )}
             <div className="flex-grow overflow-hidden">
-              <Chatbox libId={contextLibId} fileName={uploadedFileName} scrapedUrl={scrapedUrl} />
+              <Chatbox 
+                libId={contextLibId} 
+                fileName={uploadedFileName} 
+                scrapedUrl={scrapedUrl} 
+                role={getChatRole()} 
+              />
             </div>
           </div>
         )}
