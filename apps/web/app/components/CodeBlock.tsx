@@ -1,28 +1,39 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { solarizedLight } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
-
-const customStyle = {
-  lineHeight: 1.6,
-  fontSize: '0.85em',
-  padding: '0.7em 1.2em',
-  borderRadius: '1em',
-  margin: '0.7em 0',
-  background: '#f6f8fa',
-  boxShadow: '0 2px 12px 0 rgba(0,0,0,0.04)',
-  overflowX: 'auto' as const,
-};
+import React, { useState } from 'react';
 
 interface CodeBlockProps {
-  language?: string | null;
+  language: string;
   value: string;
 }
 
-export default function CodeBlock({ language = null, value }: CodeBlockProps) {
+const CodeBlock: React.FC<CodeBlockProps> = ({ language, value }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch (e) {
+      setCopied(false);
+    }
+  };
+
   return (
-    <SyntaxHighlighter language={language || undefined} style={solarizedLight} customStyle={customStyle}>
-      {value}
-    </SyntaxHighlighter>
+    <div className="relative group">
+      <pre className="overflow-x-auto rounded-lg bg-[#18181a] text-white p-4 text-sm">
+        <code className={`language-${language}`}>{value}</code>
+      </pre>
+      <button
+        onClick={handleCopy}
+        className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-700 text-white opacity-70 hover:opacity-100 transition"
+        style={{zIndex: 2}}
+      >
+        {copied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
   );
-}
+};
+
+export default CodeBlock;

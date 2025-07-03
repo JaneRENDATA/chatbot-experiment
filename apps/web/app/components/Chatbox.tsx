@@ -19,14 +19,51 @@ interface IMessage {
   isUser: boolean;
 }
 
+const LOCAL_STORAGE_KEY = 'chatbox_messages_v1';
+const PROMPT_STORAGE_KEY = 'chatbox_prompt_v1';
+
 const Chatbox: React.FC = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPromptModal, setShowPromptModal] = useState(false);
-  const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
+  const [prompt, setPrompt] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(PROMPT_STORAGE_KEY);
+        return saved || DEFAULT_PROMPT;
+      } catch {
+        return DEFAULT_PROMPT;
+      }
+    }
+    return DEFAULT_PROMPT;
+  });
   const [tempPrompt, setTempPrompt] = useState(prompt);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 聊天记录持久化
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
+    } catch {}
+  }, [messages]);
+
+  // prompt 持久化
+  useEffect(() => {
+    try {
+      localStorage.setItem(PROMPT_STORAGE_KEY, prompt);
+    } catch {}
+  }, [prompt]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -82,10 +119,11 @@ const Chatbox: React.FC = () => {
           <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
             <div className={message.isUser ? 'poe-bubble-user px-4 py-2 text-base max-w-[75%]' : 'poe-bubble-ai px-4 py-2 text-base max-w-[75%]'}>
               {message.isUser ? (
-                message.text
+                <span style={{whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.8}}>{message.text}</span>
               ) : (
                 <ReactMarkdown
                   components={{
+                    p: ({node, ...props}) => <p style={{margin: '0 0 1em 0', lineHeight: '1.8'}} {...props} />,
                     code({node, inline, className, children, ...props}) {
                       const match = /language-(\w+)/.exec(className || '');
                       return !inline ? (
