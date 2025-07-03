@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 const CodeMirror = dynamic(() => import("@uiw/react-codemirror"), { ssr: false });
 import { python } from "@codemirror/lang-python";
 
@@ -105,9 +106,14 @@ export default function PyPlayground() {
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 pt-8">
       <div className="w-full max-w-screen-2xl px-4">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Python Editor
-        </h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Python Editor
+          </h1>
+          <Link href="/" className="px-3 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition text-sm font-medium">
+            Chatbox
+          </Link>
+        </div>
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6 flex flex-col md:flex-row gap-6">
           {/* 左侧：编辑器 */}
           <div className="flex-1 flex flex-col">
