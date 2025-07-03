@@ -1,3 +1,4 @@
+'use client';
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable line-comment-position */
@@ -5,270 +6,150 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import { chatWithAI } from '../services/chatService';
-import Markdown from './Markdown';
-import vegaEmbed from 'vega-embed';
-import { ChatRoles, ChatRole } from '../config/chatroles';
+import React, { useState, useRef, useEffect } from 'react';
+import { CHAT_BASE_URL, CHAT_ENDPOINT } from '../../../../libs/shared/config/constants';
+import ReactMarkdown from 'react-markdown';
+import CodeBlock from './CodeBlock';
+
+const DEFAULT_PROMPT = 'You are a helpful assistant.';
 
 interface IMessage {
   id: number;
   text: string;
   isUser: boolean;
-  isSystem?: boolean;
 }
 
-interface IChatboxProps {
-  libId: string;
-  fileName: string | null;
-  scrapedUrl: string | null;
-  role: ChatRole; // Add this line
-}
-
-// Add this type definition for the code component props
-
-// Add this interface for ChatMessage
-interface ChatMessage {
-  role: string;
-  content: string;
-}
-
-const Chatbox: React.FC<IChatboxProps> = ({ libId, fileName, scrapedUrl, role: initialRole }) => {
-  let secondLine = fileName && `Uploaded file: **${fileName}**` || '';
-  secondLine = scrapedUrl ? `Scraped URL: **${scrapedUrl}**` : secondLine;
-  secondLine += '\n\n';
-
-  const initialMessage: IMessage = {
-    id: 0,
-    text: `Your library ID is: **${libId}**.\n\n${secondLine}Please input anything you want to ask about your data.`,
-    isUser: false,
-    isSystem: true
-  };
-
-  const [messages, setMessages] = useState<IMessage[]>([initialMessage]);
+const Chatbox: React.FC = () => {
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPromptModal, setShowPromptModal] = useState(false);
+  const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
+  const [tempPrompt, setTempPrompt] = useState(prompt);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [currentRole, setCurrentRole] = useState<ChatRole>(initialRole);
 
-  const scrollToBottom = () => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(scrollToBottom, [messages]);
+  }, [messages]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!input.trim()) return;
 
     const userMessage: IMessage = { id: Date.now(), text: input, isUser: true };
-
-    const aiMsg = { id: Date.now(), text: 'AI is thinking...', isUser: false }
-    setMessages(prev => [...prev, userMessage, aiMsg]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
-    let aiResponse = '';
     try {
-      // Format messages for the API
-      const chatMessages: ChatMessage[] = messages
-        .filter(msg => !msg.isSystem)
-        .map(msg => ({
-          role: msg.isUser ? 'user' : 'assistant',
-          content: msg.text
-        }));
-      chatMessages.push({ role: 'user', content: input });
-
-      const stream = await chatWithAI(libId, chatMessages, currentRole);
-      const reader = stream.getReader();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const text = new TextDecoder().decode(value);
-        const lines = text.split('\n\n').filter(line => line.trim() !== '');
-
-        if (lines.length === 0) {
-          // 如果没有有效的行，直接添加整个文本
-          aiResponse += text;
-          const aiMsg = { id: Date.now(), text: aiResponse, isUser: false }
-          setMessages(prev => [...prev.slice(0, -1), aiMsg]);
-        } else {
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              aiResponse += line.slice(6);
-            } else {
-              aiResponse += line;
-            }
-            const aiMsg = { id: Date.now(), text: aiResponse, isUser: false }
-            setMessages(prev => [...prev.slice(0, -1), aiMsg]);
-          }
-        }
-      }
+      const response = await fetch(`${CHAT_BASE_URL}${CHAT_ENDPOINT}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [
+          { role: 'system', content: prompt },
+          ...messages.map(msg => ({ role: msg.isUser ? 'user' : 'assistant', content: msg.text })),
+          { role: 'user', content: input }
+        ] }),
+      });
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      const aiMessage: IMessage = { id: Date.now() + 1, text: data.choices?.[0]?.message?.content || 'No response', isUser: false };
+      setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
-      console.error('Error in chat:', error);
-      setMessages(prev => [...prev, { id: Date.now(), text: 'An error occurred. Please try again.', isUser: false }]);
+      setMessages(prev => [...prev, { id: Date.now() + 2, text: 'An error occurred. Please try again.', isUser: false }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleClearChat = () => {
-    setMessages([initialMessage]);
-  };
-
-  const renderVegaLite = useCallback((container: HTMLDivElement, spec: any) => {
-    if (!container) return;
-
-    const containerWidth = container.clientWidth;
-    if (containerWidth === 0) {
-      setTimeout(() => renderVegaLite(container, spec), 100);
-      return;
-    }
-
-    const adjustedSpec = {
-      ...spec,
-      width: 'container',
-      height: 'container',
-      autosize: {
-        type: 'fit',
-        contains: 'padding'
-      }
-    };
-
-    const chartWidth = containerWidth;
-    const chartHeight = Math.min(300, containerWidth * 0.5); // 将高度设置为宽度的一半，但不超过300px
-
-    vegaEmbed(container, adjustedSpec, {
-      actions: false,
-      renderer: 'svg',
-      width: chartWidth,
-      height: chartHeight
-    }).catch(console.error);
-  }, []);
-
-  const MessageContent: React.FC<{ message: IMessage }> = ({ message }) => {
-    const vegaContainerRef = useRef<HTMLDivElement>(null);
-    const [vegaSpec, setVegaSpec] = useState<any>(null);
-    const [cleanedText, setCleanedText] = useState(message.text);
-
-    useEffect(() => {
-      const chartDataRegex = /CHART_DATA:\{.*?\}END_CHART_DATA/s;
-      const vegaLiteRegex = /VEGALITE_BEGIN:(.*?)VEGALITE_END/s;
-
-      let newCleanedText = message.text.replace(chartDataRegex, '');
-      newCleanedText = newCleanedText.replace(vegaLiteRegex, '');
-      setCleanedText(newCleanedText.trim());
-
-      const vegaMatch = message.text.match(vegaLiteRegex);
-      if (vegaMatch) {
-        try {
-          const spec = JSON.parse(vegaMatch[1]);
-          // 移除原始规范中的width和height
-          const { width, height, ...restSpec } = spec;
-          setVegaSpec(restSpec);
-        } catch (error) {
-          console.error('Failed to parse Vega-Lite spec:', error);
-        }
-      }
-    }, [message.text]);
-
-    useEffect(() => {
-      if (vegaContainerRef.current && vegaSpec) {
-        const resizeObserver = new ResizeObserver(() => {
-          renderVegaLite(vegaContainerRef.current!, vegaSpec);
-        });
-        resizeObserver.observe(vegaContainerRef.current);
-        renderVegaLite(vegaContainerRef.current, vegaSpec);
-        return () => resizeObserver.disconnect();
-      }
-    }, [vegaSpec, renderVegaLite]);
-
-    return (
-      <>
-        {message.isUser ? (
-          cleanedText
-        ) : (
-          <Markdown value={cleanedText} />
-        )}
-        {vegaSpec && (
-          <div
-            ref={vegaContainerRef}
-            className="mt-4 w-full"
-            style={{
-              maxWidth: '90%',
-              overflow: 'hidden',
-              minHeight: '350px',
-              maxHeight: '600px'
-            }}
-          />
-        )}
-      </>
-    );
-  };
-
-  const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrentRole(event.target.value as ChatRole);
-  };
-
   return (
-    <div className="flex flex-col h-full w-full mx-auto bg-base-300 rounded-lg shadow-lg relative">
-      <div className="p-2 bg-base-200 rounded-t-lg flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <label htmlFor="role-select" className="text-sm font-medium text-gray-700">Role:</label>
-          <select
-            id="role-select"
-            value={currentRole}
-            onChange={handleRoleChange}
-            className="select select-bordered select-sm"
-          >
-            {Object.entries(ChatRoles).map(([key, value]) => (
-              <option key={key} value={value}>{key}</option>
-            ))}
-          </select>
-        </div>
-        {messages.length > 1 && (
-          <button
-            onClick={handleClearChat}
-            className="btn btn-ghost btn-sm text-warning hover:bg-warning hover:bg-opacity-20 px-1"
-            title="Clear chat"
-          >
-            <TrashIcon className="h-5 w-5 mr-1 text-warning" />
-            <span className="text-warning">Clear Chat</span>
-          </button>
-        )}
+    <div className="flex flex-col h-[90vh] w-[70vw] max-w-none mx-auto bg-white rounded-2xl shadow border border-gray-200 p-6 relative">
+      {/* 设置按钮和当前 prompt 展示 */}
+      <div className="flex items-center mb-4">
+        <button
+          className="ml-auto px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
+          onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
+        >
+          设置
+        </button>
+        <span className="ml-4 text-xs text-gray-400 truncate max-w-[60%]" title={prompt}>
+          当前Prompt: {prompt}
+        </span>
       </div>
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      {/* 聊天内容 */}
+      <div className="flex-1 overflow-y-auto space-y-4 pb-4">
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] p-3 rounded-lg ${message.isSystem
-              ? 'bg-gray-200 text-gray-600'
-              : message.isUser
-                ? 'bg-blue-500 text-white'
-                : 'bg-primary text-primary-content'
-              }`}>
-              <MessageContent message={message} />
+            <div className={message.isUser ? 'poe-bubble-user px-4 py-2 text-base max-w-[75%]' : 'poe-bubble-ai px-4 py-2 text-base max-w-[75%]'}>
+              {message.isUser ? (
+                message.text
+              ) : (
+                <ReactMarkdown
+                  components={{
+                    code({node, inline, className, children, ...props}) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline ? (
+                        <CodeBlock language={match?.[1] || ''} value={String(children).replace(/\n$/, '')} />
+                      ) : (
+                        <code className={className} {...props}>{children}</code>
+                      );
+                    }
+                  }}
+                >
+                  {message.text}
+                </ReactMarkdown>
+              )}
             </div>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSubmit} className="bg-base-300 rounded-b-lg p-2">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            className="flex-1 input input-bordered"
-            placeholder="Type your message..."
-            disabled={isLoading}
-          />
-          <button type="submit" className="btn btn-primary" disabled={isLoading}>
-            {isLoading ? <span className="loading loading-spinner"></span> : 'Send'}
-          </button>
-        </div>
+      {/* 输入区 */}
+      <form onSubmit={handleSubmit} className="flex mt-2">
+        <textarea
+          className="poe-input flex-1 mr-2"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Type your message..."
+          disabled={isLoading}
+          rows={2}
+        />
+        <button
+          className="poe-btn"
+          type="submit"
+          disabled={isLoading || !input.trim()}
+        >
+          Send
+        </button>
       </form>
+      {/* Prompt 设置 Modal */}
+      {showPromptModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+            <h2 className="text-lg font-semibold mb-4">自定义 Prompt</h2>
+            <textarea
+              className="w-full border rounded p-2 mb-4 min-h-[60px]"
+              value={tempPrompt}
+              onChange={e => setTempPrompt(e.target.value)}
+              placeholder="输入自定义系统提示词..."
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-1 rounded bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
+                onClick={() => setShowPromptModal(false)}
+              >
+                取消
+              </button>
+              <button
+                className="px-4 py-1 rounded bg-blue-600 text-white border border-blue-700 hover:bg-blue-700"
+                onClick={() => { setPrompt(tempPrompt); setShowPromptModal(false); }}
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

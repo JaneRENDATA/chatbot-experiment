@@ -1,7 +1,4 @@
-export const CHAT_BASE_URL = 
-  typeof process !== 'undefined' && process.env.CHAT_BASE_URL 
-  || typeof window !== 'undefined' && (window as any).CHAT_BASE_URL
-  || 'https://devchat.firstchatbi.com';
+export const CHAT_BASE_URL = 'http://localhost:4000';
 
 export const UPLOAD_ENDPOINT = '/upload';
 export const CHAT_ENDPOINT = '/chat';

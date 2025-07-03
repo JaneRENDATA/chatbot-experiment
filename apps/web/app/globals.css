@@ -3,41 +3,48 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --ntu-red: #C5001E;
+  --ntu-blue: #003A70;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #f3f4f6;
+  min-height: 100vh;
 }
 
-
-@keyframes gradient-x {
-  0%, 100% {
-    background-size: 200% 200%;
-    background-position: left center;
-  }
-  50% {
-    background-size: 200% 200%;
-    background-position: right center;
-  }
+.poe-bubble-user {
+  background: #e0e7ff;
+  color: #1e40af;
+  border-radius: 1rem 1rem 0.5rem 1rem;
 }
 
-.animate-gradient-x {
-  animation: gradient-x 3s ease infinite;
+.poe-bubble-ai {
+  background: #fff;
+  color: #111827;
+  border-radius: 1rem 1rem 1rem 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.poe-input {
+  background: #fff;
+  border-radius: 1rem 0 0 1rem;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  padding: 0.75rem 1rem;
+  min-height: 44px;
+  resize: none;
+  box-shadow: none;
+}
+
+.poe-btn {
+  background: #2563eb;
+  color: #fff;
+  border-radius: 0 1rem 1rem 0;
+  font-weight: 500;
+  padding: 0 1.5rem;
+  border: none;
+  transition: background 0.2s;
+}
+.poe-btn:hover {
+  background: #1e40af;
 }

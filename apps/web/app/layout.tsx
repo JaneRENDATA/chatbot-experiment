@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import dynamic from 'next/dynamic';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const HeaderComponent = dynamic(() => import('./components/Header'), { ssr: false });
+// const HeaderComponent = dynamic(() => import('./components/Header'), { ssr: false });
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +22,6 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="techDark">
       <body className={`${inter.className} bg-gradient-to-br from-gray-900 via-blue-900 to-blue-800 min-h-screen`}>
-        <HeaderComponent />
         {children}
       </body>
     </html>
