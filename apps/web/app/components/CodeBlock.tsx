@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import React, { useState } from 'react';
+import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomOneDark } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
 interface CodeBlockProps {
   language: string;
@@ -22,9 +24,22 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, value }) => {
 
   return (
     <div className="relative group">
-      <pre className="overflow-x-auto rounded-lg bg-[#18181a] text-white p-4 text-sm">
-        <code className={`language-${language}`}>{value}</code>
-      </pre>
+      <SyntaxHighlighter
+        language={language || 'python'}
+        style={atomOneDark}
+        customStyle={{
+          borderRadius: '0.75em',
+          margin: 0,
+          fontSize: '0.95em',
+          padding: '1.2em 1.2em 1.2em 1.2em',
+          background: '#18181a',
+          lineHeight: 1.7,
+          overflowX: 'auto',
+        }}
+        codeTagProps={{ style: { fontFamily: 'Fira Mono, Menlo, monospace' } }}
+      >
+        {value}
+      </SyntaxHighlighter>
       <button
         onClick={handleCopy}
         className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-700 text-white opacity-70 hover:opacity-100 transition"
