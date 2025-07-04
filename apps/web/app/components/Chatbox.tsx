@@ -162,6 +162,14 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           placeholder="Type your message..."
           disabled={isLoading}
           rows={2}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              if (!isLoading && input.trim()) {
+                (e.target as HTMLTextAreaElement).form?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+              }
+            }
+          }}
         />
         <button
           className="poe-btn"
