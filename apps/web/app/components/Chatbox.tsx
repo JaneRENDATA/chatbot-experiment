@@ -22,7 +22,14 @@ interface IMessage {
 const LOCAL_STORAGE_KEY = 'chatbox_messages_v1';
 const PROMPT_STORAGE_KEY = 'chatbox_prompt_v1';
 
-const Chatbox: React.FC = () => {
+interface ChatboxProps {
+  libId?: string | null;
+  fileName?: string | null;
+  scrapedUrl?: string | null;
+  role?: string;
+}
+
+const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) => {
   const [messages, setMessages] = useState<IMessage[]>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -55,14 +62,18 @@ const Chatbox: React.FC = () => {
   useEffect(() => {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
-    } catch {}
+    } catch (error) {
+      console.warn('localStorage error:', error);
+    }
   }, [messages]);
 
   // prompt 持久化
   useEffect(() => {
     try {
       localStorage.setItem(PROMPT_STORAGE_KEY, prompt);
-    } catch {}
+    } catch (error) {
+      console.warn('localStorage error:', error);
+    }
   }, [prompt]);
 
   useEffect(() => {

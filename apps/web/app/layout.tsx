@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import dynamic from 'next/dynamic';
+//import dynamic from 'next/dynamic';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 // const HeaderComponent = dynamic(() => import('./components/Header'), { ssr: false });

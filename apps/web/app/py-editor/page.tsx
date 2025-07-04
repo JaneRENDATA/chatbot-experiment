@@ -10,22 +10,26 @@ export default function PyPlayground() {
   const [stdout, setStdout] = useState('');
   const [stderr, setStderr] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [pyodideReady, setPyodideReady] = useState(false);
-  const pyodideRef = useRef<any>(null);
+  const [isPyodideReady, setIsPyodideReady] = useState(false);
+  interface IPyodide {
+    runPython: (code: string) => void;
+    globals: { get: (name: string) => string };
+  }
+  const pyodideRef = useRef<IPyodide | null>(null);
   const outputRef = useRef<HTMLDivElement>(null);
 
   // 动态加载 pyodide.js
   useEffect(() => {
-    if (!(window as any).loadPyodide) {
+    if (!((window as unknown) as { loadPyodide?: (config: { indexURL: string }) => Promise<IPyodide> }).loadPyodide) {
       const script = document.createElement("script");
       script.src = "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js";
       script.onload = () => {
-        setPyodideReady(true);
+        setIsPyodideReady(true);
         console.log("pyodide.js loaded");
       };
       document.body.appendChild(script);
     } else {
-      setPyodideReady(true);
+      setIsPyodideReady(true);
     }
   }, []);
 
@@ -33,7 +37,7 @@ export default function PyPlayground() {
     if (!pyodideRef.current) {
       setIsLoading(true);
       try {
-        pyodideRef.current = await (window as any).loadPyodide({
+        pyodideRef.current = await ((window as unknown) as { loadPyodide: (config: { indexURL: string }) => Promise<IPyodide> }).loadPyodide({
           indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/",
         });
       } catch (e) {
@@ -47,25 +51,51 @@ export default function PyPlayground() {
   };
 
   const runCode = async () => {
-    if (!(window as any).loadPyodide) {
+    if (!((window as unknown) as { loadPyodide?: (config: { indexURL: string }) => Promise<IPyodide> }).loadPyodide) {
       setStderr("Pyodide 脚本还未加载完成");
       return;
     }
-    const ok = await ensurePyodide();
-    if (!ok) return;
+    const isOk = await ensurePyodide();
+    if (!isOk) return;
     setIsLoading(true);
     setStdout('');
     setStderr('');
     try {
       const pyodide = pyodideRef.current;
-      const captureCode = `\nimport sys\nfrom io import StringIO\nstdout_buffer = StringIO()\nstderr_buffer = StringIO()\noriginal_stdout = sys.stdout\noriginal_stderr = sys.stderr\nsys.stdout = stdout_buffer\nsys.stderr = stderr_buffer\ntry:\n    exec(\"\"\"${code.replace(/"/g, '\\"').replace(/\n/g, '\\n')}\"\"\")\nexcept Exception as e:\n    import traceback\n    traceback.print_exc()\nfinally:\n    sys.stdout = original_stdout\n    sys.stderr = original_stderr\ncaptured_stdout = stdout_buffer.getvalue()\ncaptured_stderr = stderr_buffer.getvalue()\nstdout_buffer.close()\nstderr_buffer.close()\n`;
+      if (!pyodide) {
+        setStderr('Pyodide 未初始化');
+        setIsLoading(false);
+        return;
+      }
+      const captureCode = `
+import sys
+from io import StringIO
+stdout_buffer = StringIO()
+stderr_buffer = StringIO()
+original_stdout = sys.stdout
+original_stderr = sys.stderr
+sys.stdout = stdout_buffer
+sys.stderr = stderr_buffer
+try:
+    exec("""${code.replace(/"/g, '"').replace(/\n/g, '\n')}""")
+except Exception as e:
+    import traceback
+    traceback.print_exc()
+finally:
+    sys.stdout = original_stdout
+    sys.stderr = original_stderr
+captured_stdout = stdout_buffer.getvalue()
+captured_stderr = stderr_buffer.getvalue()
+stdout_buffer.close()
+stderr_buffer.close()
+`;
       pyodide.runPython(captureCode);
       const capturedStdout = pyodide.globals.get('captured_stdout');
       const capturedStderr = pyodide.globals.get('captured_stderr');
       setStdout(capturedStdout || '');
       setStderr(capturedStderr || '');
-    } catch (error: any) {
-      setStderr(`执行错误: ${error.message}`);
+    } catch (error) {
+      setStderr(`执行错误: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsLoading(false);
     }
@@ -93,16 +123,6 @@ export default function PyPlayground() {
     );
   };
 
-  const handleCopy = () => {
-    const combinedOutput = stdout + (stderr ? (stdout ? '\n' : '') + stderr : '');
-    navigator.clipboard.writeText(combinedOutput);
-  };
-
-  const clearOutput = () => {
-    setStdout('');
-    setStderr('');
-  };
-
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 pt-8">
       <div className="w-full max-w-screen-2xl px-4">
@@ -121,16 +141,16 @@ export default function PyPlayground() {
               <span className="font-semibold text-gray-700">Python Editor</span>
               <button
                 onClick={runCode}
-                disabled={isLoading || !pyodideReady}
+                disabled={isLoading || !isPyodideReady}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
               >
-                {isLoading ? 'Running...' : (!pyodideReady ? 'Loading...' : 'Run Code')}
+                {isLoading ? 'Running...' : (!isPyodideReady ? 'Loading...' : 'Run Code')}
               </button>
             </div>
             <div className="border border-gray-300 rounded-lg overflow-hidden flex-1 min-h-[550px] max-h-[550px]">
               <CodeMirror
                 value={code}
-                onChange={(value) => setCode(value)}
+                onChange={(value: string) => setCode(value)}
                 extensions={[python()]}
                 theme="dark"
                 height="100%"
