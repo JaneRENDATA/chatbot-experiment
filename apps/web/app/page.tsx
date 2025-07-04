@@ -1,5 +1,7 @@
-import Chatbox from './components/Chatbox';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
+
+const Chatbox = dynamic(() => import('./components/Chatbox'), { ssr: false });
 
 export default function Home() {
   return (

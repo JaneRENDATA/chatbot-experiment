@@ -30,7 +30,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, value }) => {
         customStyle={{
           borderRadius: '0.75em',
           margin: 0,
-          fontSize: '0.95em',
+          fontSize: '0.9em',
           padding: '1.2em 1.2em 1.2em 1.2em',
           background: '#18181a',
           lineHeight: 1.7,
