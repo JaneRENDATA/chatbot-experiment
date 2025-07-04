@@ -11,7 +11,7 @@ import { CHAT_BASE_URL, CHAT_ENDPOINT } from '../../../../libs/shared/config/con
 import ReactMarkdown from 'react-markdown';
 import CodeBlock from './CodeBlock';
 
-const DEFAULT_PROMPT = 'You are a helpful assistant.';
+const DEFAULT_PROMPT = 'You are a Python tutor focused on teaching through connected concepts. When learners ask questions, show how different Python elements work together to solve problems. Start with the big picture, then demonstrate how basic concepts combine to create solutions. Use real-world examples to show concept relationships. Guide learners to discover patterns across different Python features. Encourage experimentation and help learners see multiple ways to solve problems. Always connect new learning to practical applications.';
 
 interface IMessage {
   id: number;
@@ -112,16 +112,16 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
 
   return (
     <div className="flex flex-col h-[90vh] w-[70vw] max-w-none mx-auto bg-white rounded-2xl shadow border border-gray-200 p-6 relative">
-      {/* 设置按钮和当前 prompt 展示 */}
+      {/* Prompt settings and current prompt display */}
       <div className="flex items-center mb-4">
         <button
           className="ml-auto px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
           onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
         >
-          设置
+          Edit Prompt
         </button>
         <span className="ml-4 text-xs text-gray-400 truncate max-w-[60%]" title={prompt}>
-          当前Prompt: {prompt}
+          Current Prompt: {prompt}
         </span>
       </div>
       {/* 聊天内容 */}
@@ -153,7 +153,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
         ))}
         <div ref={messagesEndRef} />
       </div>
-      {/* 输入区 */}
+      {/* Input area */}
       <form onSubmit={handleSubmit} className="flex mt-2">
         <textarea
           className="poe-input flex-1 mr-2"
@@ -171,29 +171,30 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           Send
         </button>
       </form>
-      {/* Prompt 设置 Modal */}
+      {/* Prompt Edit Modal */}
       {showPromptModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4">自定义 Prompt</h2>
+            <h2 className="text-lg font-semibold mb-4">Custom Prompt</h2>
             <textarea
-              className="w-full border rounded p-2 mb-4 min-h-[60px]"
+              className="textarea textarea-bordered w-full mb-4"
+              rows={8}
               value={tempPrompt}
               onChange={e => setTempPrompt(e.target.value)}
-              placeholder="输入自定义系统提示词..."
+              placeholder="Enter your custom system prompt..."
             />
             <div className="flex justify-end gap-2">
               <button
                 className="px-4 py-1 rounded bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
                 onClick={() => setShowPromptModal(false)}
               >
-                取消
+                Cancel
               </button>
               <button
                 className="px-4 py-1 rounded bg-blue-600 text-white border border-blue-700 hover:bg-blue-700"
                 onClick={() => { setPrompt(tempPrompt); setShowPromptModal(false); }}
               >
-                保存
+                Save
               </button>
             </div>
           </div>
