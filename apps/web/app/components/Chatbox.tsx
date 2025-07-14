@@ -99,12 +99,24 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           { role: 'user', content: input }
         ] }),
       });
-      if (!response.ok) throw new Error('Network response was not ok');
+      
+      console.log('Chat response status:', response.status);
+      console.log('Chat response headers:', response.headers);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Chat error response:', errorText);
+        throw new Error(`Network response was not ok: ${response.status} - ${errorText}`);
+      }
+      
       const data = await response.json();
+      console.log('Chat response data:', data);
+      
       const aiMessage: IMessage = { id: Date.now() + 1, text: data.choices?.[0]?.message?.content || 'No response', isUser: false };
       setMessages(prev => [...prev, aiMessage]);
-    } catch (error) {
-      setMessages(prev => [...prev, { id: Date.now() + 2, text: 'An error occurred. Please try again.', isUser: false }]);
+    } catch (error: any) {
+      console.error('Chat error:', error);
+      setMessages(prev => [...prev, { id: Date.now() + 2, text: `Error: ${error.message}`, isUser: false }]);
     } finally {
       setIsLoading(false);
     }

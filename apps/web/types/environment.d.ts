@@ -6,6 +6,7 @@ declare global {
     interface ProcessEnv {
       NEXT_PUBLIC_ENV: 'test' | 'dev' | 'prod';
       NEXT_PUBLIC_NESTJS_SERVER: string;
+      NEXT_PUBLIC_CHAT_BASE_URL: string;
     }
   }
 }

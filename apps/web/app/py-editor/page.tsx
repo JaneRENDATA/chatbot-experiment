@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-const CodeMirror = dynamic(() => import("@uiw/react-codemirror"), { ssr: false });
+const codeMirror = dynamic(() => import("@uiw/react-codemirror"), { ssr: false });
 import { python } from "@codemirror/lang-python";
 
 export default function PyPlayground() {
@@ -122,6 +122,8 @@ stderr_buffer.close()
       </pre>
     );
   };
+
+  const CodeMirror = codeMirror;
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 pt-8">

@@ -45,6 +45,9 @@ EXPOSE 3000 4000
 # Create a startup script
 RUN echo '#!/bin/sh' > start.sh && \
     echo 'set -e' >> start.sh && \
+    echo 'echo "Starting application..."' >> start.sh && \
+    echo 'echo "Environment: $NODE_ENV"' >> start.sh && \
+    echo 'echo "Port: $PORT"' >> start.sh && \
     echo 'pnpm run start' >> start.sh && \
     chmod +x start.sh
 

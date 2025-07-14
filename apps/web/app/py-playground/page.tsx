@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-const CodeMirror = dynamic(() => import("@uiw/react-codemirror"), { ssr: false });
+const codeMirror = dynamic(() => import("@uiw/react-codemirror"), { ssr: false });
 import { python } from "@codemirror/lang-python";
 
 // Define proper TypeScript interfaces
@@ -149,6 +149,8 @@ stderr_buffer.close()
     setStdout('');
     setStderr('');
   };
+
+  const CodeMirror = codeMirror;
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 pt-8">

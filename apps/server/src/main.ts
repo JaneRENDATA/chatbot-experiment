@@ -5,16 +5,19 @@ import { TrpcRouter } from '@server/trpc/trpc.router';
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
-    app.enableCors();
+    app.enableCors({
+      origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+      credentials: true,
+    });
 
     const trpc = app.get(TrpcRouter);
     trpc.applyMiddleware(app);
 
-    // const port = process.env.PORT;
-    // console.log(`[server]: Server is running at http://localhost:${port}`);
+    const port = process.env.PORT || 4000;
+    console.log(`[server]: Server is running at http://localhost:${port}`);
+    console.log(`[server]: Environment: ${process.env.NODE_ENV || 'development'}`);
 
-    // await app.listen(process.env.PORT || 4000);
-    await app.listen(4000);
+    await app.listen(port);
   } catch (error) {
     console.error('Failed to start the application:', error);
     process.exit(1); // quit.
