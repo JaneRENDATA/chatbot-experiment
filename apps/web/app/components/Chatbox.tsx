@@ -57,6 +57,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
   });
   const [tempPrompt, setTempPrompt] = useState(prompt);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // 聊天记录持久化
   useEffect(() => {
@@ -127,7 +128,13 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
       {/* Prompt settings and current prompt display */}
       <div className="flex items-center mb-4">
         <button
-          className="ml-auto px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
+          className="px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
+          onClick={() => setShowClearConfirm(true)}
+        >
+          Clear History
+        </button>
+        <button
+          className="ml-2 px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
           onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
         >
           Edit Prompt
@@ -136,6 +143,34 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           Current Prompt: {prompt}
         </span>
       </div>
+      {/* Clear History Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-xs">
+            <h2 className="text-lg font-semibold mb-4 text-black">Clear all chat history?</h2>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-1 rounded bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
+                onClick={() => setShowClearConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-1 rounded bg-red-600 text-white border border-red-700 hover:bg-red-700"
+                onClick={() => {
+                  setMessages([]);
+                  if (typeof window !== 'undefined') {
+                    localStorage.removeItem(LOCAL_STORAGE_KEY);
+                  }
+                  setShowClearConfirm(false);
+                }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* 聊天内容 */}
       <div className="flex-1 overflow-y-auto space-y-4 pb-4">
         {messages.map((message) => (
