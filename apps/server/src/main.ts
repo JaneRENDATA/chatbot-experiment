@@ -13,6 +13,7 @@ async function bootstrap() {
     const trpc = app.get(TrpcRouter);
     trpc.applyMiddleware(app);
 
+    // 只监听一次端口，且端口用 process.env.PORT
     const port = process.env.PORT || 4000;
     console.log(`[server]: Server is running at http://localhost:${port}`);
     console.log(`[server]: Environment: ${process.env.NODE_ENV || 'development'}`);
