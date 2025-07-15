@@ -17,6 +17,8 @@ interface IMessage {
   id: number;
   text: string;
   isUser: boolean;
+  prompts?: string[]; // 新增 prompts 字段
+  source?: string; // 新增 source 字段
 }
 
 const LOCAL_STORAGE_KEY = 'chatbox_messages_v1';
@@ -43,6 +45,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
   });
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [prompt, setPrompt] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -81,6 +84,19 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // 计算当前步数（用户消息数量）
+  const getStep = () => messages.filter(m => m.isUser).length + 1;
+
+  // 点击推荐 prompt
+  const handlePromptClick = (promptText: string) => {
+    setInput(promptText);
+    setTimeout(() => {
+      // 自动提交
+      const form = document.querySelector('form');
+      if (form) form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }, 0);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!input.trim()) return;
@@ -89,17 +105,17 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    setShowLoading(true);
 
     // 构造请求体
+    const step = getStep();
     const payload = {
-      model: 'deepseek-chat',
       messages: [
         { role: 'system', content: prompt },
         ...messages.map(msg => ({ role: msg.isUser ? 'user' : 'assistant', content: msg.text })),
         { role: 'user', content: input }
       ],
-      stream: true,
-      temperature: 0.7,
+      step
     };
 
     // 先插入一个空的 AI 消息
@@ -119,9 +135,14 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let aiText = '';
+      let prompts: string[] = [];
+      let source: string | undefined = undefined;
+      let firstChunk = true;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+        const now = Date.now();
+        console.log('[前端] 收到 chunk:', now, decoder.decode(value));
         const chunk = decoder.decode(value);
         const lines = chunk.split('\n').filter(line => line.trim() !== '');
         for (const line of lines) {
@@ -131,9 +152,20 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
               const json = JSON.parse(data);
               const delta = json.choices?.[0]?.delta;
               if (delta?.content) {
-                aiText += delta.content;
+                aiText += delta.content; // 逐步追加，保证流式体验
                 setMessages(prev => prev.map(msg =>
                   msg.id === aiMsgId ? { ...msg, text: aiText } : msg
+                ));
+                if (firstChunk) {
+                  setShowLoading(false);
+                  firstChunk = false;
+                }
+              }
+              if (json.choices?.[0]?.finish_reason === 'stop') {
+                prompts = json.choices?.[0]?.prompts || [];
+                source = json.choices?.[0]?.source;
+                setMessages(prev => prev.map(msg =>
+                  msg.id === aiMsgId ? { ...msg, prompts, source } : msg
                 ));
               }
             } catch (e) {
@@ -146,8 +178,10 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
       setMessages(prev => prev.map(msg =>
         msg.id === aiMsgId ? { ...msg, text: `Error: ${error.message}` } : msg
       ));
+      setShowLoading(false);
     } finally {
       setIsLoading(false);
+      setShowLoading(false);
     }
   };
 
@@ -200,28 +234,65 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
         </div>
       )}
       {/* 聊天内容 */}
-      <div className="flex-1 overflow-y-auto space-y-4 pb-4">
-        {messages.map((message) => (
-          <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-            <div className={message.isUser ? 'poe-bubble-user px-4 py-2 text-base max-w-[75%]' : 'poe-bubble-ai px-4 py-2 text-base max-w-[75%]'}>
-              {message.isUser ? (
-                <span style={{whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.8}}>{message.text}</span>
+      <div className="flex-1 overflow-y-auto mb-4">
+        {messages.map((msg, idx) => (
+          <div
+            key={msg.id}
+            className={`mb-2 flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-[80%] px-4 py-2 rounded-xl whitespace-pre-line break-words shadow-sm ${
+                msg.isUser
+                  ? 'bg-blue-100 text-blue-900 rounded-br-none'
+                  : 'bg-gray-100 text-gray-900 rounded-bl-none'
+              }`}
+            >
+              {/* 用户消息为纯文本，AI消息为 markdown+代码块+loading动画 */}
+              {msg.isUser ? (
+                <span>{msg.text}</span>
               ) : (
-                <ReactMarkdown
-                  components={{
-                    p: ({node, ...props}) => <p style={{margin: '0 0 1em 0', lineHeight: '1.8'}} {...props} />,
-                    code({node, inline, className, children, ...props}) {
-                      const match = /language-(\w+)/.exec(className || '');
-                      return !inline ? (
-                        <CodeBlock language={match?.[1] || ''} value={String(children).replace(/\n$/, '')} />
-                      ) : (
-                        <code className={className} {...props}>{children}</code>
-                      );
-                    }
-                  }}
-                >
-                  {message.text}
-                </ReactMarkdown>
+                <>
+                  <ReactMarkdown
+                    components={{
+                      code({node, inline, className, children, ...props}) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline ? (
+                          <CodeBlock language={match?.[1] || ''} value={String(children).replace(/\n$/, '')} />
+                        ) : (
+                          <code className={className} {...props}>{children}</code>
+                        );
+                      }
+                    }}
+                  >
+                    {typeof msg.text === 'string' ? msg.text : ''}
+                  </ReactMarkdown>
+                  {showLoading && idx === messages.length - 1 && (
+                    <span className="inline-flex items-center ml-1 align-bottom">
+                      <span className="animate-bounce text-2xl text-gray-400 select-none">.</span>
+                      <span className="animate-bounce text-2xl text-gray-400 select-none" style={{ animationDelay: '0.2s' }}>.</span>
+                      <span className="animate-bounce text-2xl text-gray-400 select-none" style={{ animationDelay: '0.4s' }}>.</span>
+                    </span>
+                  )}
+                </>
+              )}
+              {/* 推荐 prompt 按钮等... */}
+              {msg.prompts && msg.prompts.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {msg.prompts.map((p, idx) => (
+                    <button
+                      key={idx}
+                      className="px-3 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition text-sm"
+                      onClick={() => handlePromptClick(p)}
+                      disabled={isLoading}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {/* 显示来源标签 */}
+              {msg.source && (
+                <span className="text-xs text-gray-400 ml-2">[{msg.source === 'rule' ? 'Rule' : 'LLM'}]</span>
               )}
             </div>
           </div>
