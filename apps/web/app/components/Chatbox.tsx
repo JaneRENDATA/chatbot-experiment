@@ -90,34 +90,62 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
     setInput('');
     setIsLoading(true);
 
+    // 构造请求体
+    const payload = {
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: prompt },
+        ...messages.map(msg => ({ role: msg.isUser ? 'user' : 'assistant', content: msg.text })),
+        { role: 'user', content: input }
+      ],
+      stream: true,
+      temperature: 0.7,
+    };
+
+    // 先插入一个空的 AI 消息
+    const aiMsgId = Date.now() + 1;
+    setMessages(prev => [...prev, { id: aiMsgId, text: '', isUser: false }]);
+
     try {
-      const response = await fetch(`${CHAT_BASE_URL}${CHAT_ENDPOINT}`, {
+      const response = await fetch(`${CHAT_BASE_URL}/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [
-          { role: 'system', content: prompt },
-          ...messages.map(msg => ({ role: msg.isUser ? 'user' : 'assistant', content: msg.text })),
-          { role: 'user', content: input }
-        ] }),
+        body: JSON.stringify(payload),
       });
-      
-      console.log('Chat response status:', response.status);
-      console.log('Chat response headers:', response.headers);
-      
-      if (!response.ok) {
+      if (!response.ok || !response.body) {
         const errorText = await response.text();
-        console.error('Chat error response:', errorText);
         throw new Error(`Network response was not ok: ${response.status} - ${errorText}`);
       }
-      
-      const data = await response.json();
-      console.log('Chat response data:', data);
-      
-      const aiMessage: IMessage = { id: Date.now() + 1, text: data.choices?.[0]?.message?.content || 'No response', isUser: false };
-      setMessages(prev => [...prev, aiMessage]);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let aiText = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.replace('data: ', '');
+            try {
+              const json = JSON.parse(data);
+              const delta = json.choices?.[0]?.delta;
+              if (delta?.content) {
+                aiText += delta.content;
+                setMessages(prev => prev.map(msg =>
+                  msg.id === aiMsgId ? { ...msg, text: aiText } : msg
+                ));
+              }
+            } catch (e) {
+              // 忽略解析错误
+            }
+          }
+        }
+      }
     } catch (error: any) {
-      console.error('Chat error:', error);
-      setMessages(prev => [...prev, { id: Date.now() + 2, text: `Error: ${error.message}`, isUser: false }]);
+      setMessages(prev => prev.map(msg =>
+        msg.id === aiMsgId ? { ...msg, text: `Error: ${error.message}` } : msg
+      ));
     } finally {
       setIsLoading(false);
     }
