@@ -15,10 +15,11 @@ async function bootstrap() {
 
     // 只监听一次端口，且端口用 process.env.PORT
     const port = process.env.PORT || 4000;
-    console.log(`[server]: Server is running at http://localhost:${port}`);
+    const host = process.env.HOST || '0.0.0.0';
+    console.log(`[server]: Server is running at http://${host}:${port}`);
     console.log(`[server]: Environment: ${process.env.NODE_ENV || 'development'}`);
 
-    await app.listen(port);
+    await app.listen(port, host);
   } catch (error) {
     console.error('Failed to start the application:', error);
     process.exit(1); // quit.

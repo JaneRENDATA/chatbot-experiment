@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Header from './components/Header';
 //import dynamic from 'next/dynamic';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -9,7 +10,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Chat BI',
+  title: 'Chatbox',
   keywords: 'BI, Data Analysis, AI Assistant, InsightAI for your business',
   description: 'InsightAI introduces a cutting-edge intelligent analysis tool, providing an all-in-one data analysis solution.',
 };
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="techDark">
       <body className={`${inter.className} bg-gradient-to-br from-gray-900 via-blue-900 to-blue-800 min-h-screen`}>
+        <Header />
         {children}
       </body>
     </html>

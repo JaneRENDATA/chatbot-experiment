@@ -61,4 +61,9 @@ export class ChatController {
     await this.chatService.streamWithAI({ ...body, prompts, source }, res);
     // 注意：streamWithAI 内部已处理 res.end()，此处不能 return/res.end，否则会报错
   }
+
+  @Post('reload')
+  async reload() {
+    return { success: true };
+  }
 } 

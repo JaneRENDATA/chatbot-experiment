@@ -31,6 +31,39 @@ interface ChatboxProps {
   role?: string;
 }
 
+// 在组件外部添加处理函数
+function processLLMText(text: string) {
+  const codeBlockRegex = /(```[\s\S]*?```|~~~[\s\S]*?~~~)/g;
+  let lastIndex = 0;
+  let result = '';
+  let match;
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    // 处理代码块前的普通文本
+    const before = text.slice(lastIndex, match.index);
+    result += processParagraphs(before);
+    // 保留代码块原样
+    result += match[0];
+    lastIndex = match.index + match[0].length;
+  }
+  // 处理最后一段普通文本
+  result += processParagraphs(text.slice(lastIndex));
+  return result;
+}
+function processParagraphs(str: string) {
+  // 1. 合并多于1个的空白行为1个
+  let s = str.replace(/(\n[ \t]*){2,}/g, '\n');
+  // 2. 去掉所有单独的空白行
+  s = s.replace(/(^|[^\n])\n[ \t]*(?!\n)/g, '$1');
+  return s;
+}
+
+// 定义高阶函数生成 p 组件
+function createParagraph(isRule: boolean) {
+  return function P({ children }: { children: React.ReactNode }) {
+    return <p style={{ margin: '0 0 0.2em 0', lineHeight: isRule ? 1.7 : 0.9 }}>{children}</p>;
+  };
+}
+
 const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) => {
   const [messages, setMessages] = useState<IMessage[]>(() => {
     if (typeof window !== 'undefined') {
@@ -196,14 +229,14 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           onClick={() => setRecommendMode('horizontal')}
           disabled={isLoading}
         >
-          Horizontal (Cross-topic)
+          Version A (cross-topic)
         </button>
         <button
           className={`px-3 py-1 rounded border transition ${recommendMode === 'vertical' ? 'bg-purple-200 text-purple-900 border-purple-300' : 'bg-gray-100 text-gray-700 border-gray-300'}`}
           onClick={() => setRecommendMode('vertical')}
           disabled={isLoading}
         >
-          Vertical (In-depth)
+          Version B (in-depth)
         </button>
         {/* Prompt settings and current prompt display */}
         <button
@@ -263,6 +296,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
                   ? 'bg-blue-100 text-blue-900 rounded-br-none'
                   : 'bg-gray-100 text-gray-900 rounded-bl-none'
               }`}
+              style={{ lineHeight: 1 }}
             >
               {/* 用户消息为纯文本，AI消息为 markdown+代码块+loading动画 */}
               {msg.isUser ? (
@@ -274,14 +308,21 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
                       code({node, inline, className, children, ...props}) {
                         const match = /language-(\w+)/.exec(className || '');
                         return !inline ? (
-                          <CodeBlock language={match?.[1] || ''} value={String(children).replace(/\n$/, '')} />
+                          <div style={{ margin: '0.5em 0' }}>
+                            <CodeBlock language={match?.[1] || ''} value={String(children).replace(/\n$/, '')} />
+                          </div>
                         ) : (
                           <code className={className} {...props}>{children}</code>
                         );
-                      }
+                      },
+                      p: createParagraph(msg.source === 'rule')
                     }}
                   >
-                    {typeof msg.text === 'string' ? msg.text : ''}
+                    {typeof msg.text === 'string'
+                      ? (msg.source === 'LLM'
+                          ? processLLMText(msg.text)
+                          : msg.text)
+                      : ''}
                   </ReactMarkdown>
                   {showLoading && idx === messages.length - 1 && (
                     <span className="inline-flex items-center ml-1 align-bottom">

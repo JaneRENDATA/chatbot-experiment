@@ -23,30 +23,43 @@ interface FlatRule {
 
 @Injectable()
 export class ChatService {
-  private rules: FlatRule[] = [];
-
   constructor(private readonly deepSeekService: DeepSeekService) {
-    // 只读取平铺结构的 rule-based.yaml
-    const filePath = path.join(__dirname, 'rules', 'rule-based.yaml');
-    const raw = fs.readFileSync(filePath, 'utf8');
-    this.rules = yaml.load(raw) as FlatRule[];
   }
 
-  // 查找知识点，支持模糊匹配
+  // 辅助：归一化字符串，去除标点、全小写、去多余空格
+  private normalize(str: string): string {
+    return str.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  // Always load rules from YAML for every request
+  private getRules(): FlatRule[] {
+    const filePath = path.join(__dirname, 'rules', 'rule-based.yaml');
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return yaml.load(raw) as FlatRule[];
+  }
+
+  // 查找知识点，支持归一化精确匹配
   private findRule(input: string): FlatRule | undefined {
-    input = input.toLowerCase();
-    return this.rules.find(rule =>
-      rule.question.toLowerCase().includes(input) ||
-      rule.topic.toLowerCase().includes(input)
+    const rules = this.getRules();
+    const normInput = this.normalize(input);
+    return rules.find(rule =>
+      this.normalize(rule.question) === normInput ||
+      this.normalize(rule.topic) === normInput
     );
   }
 
   public matchRuleFlat(input: string, mode: 'horizontal' | 'vertical' = 'horizontal'): { content: string; prompts: string[] } | null {
+    const rules = this.getRules();
     const rule = this.findRule(input);
     if (!rule) return null;
+    // prompts 是 id 数组，转成 question
+    const promptIds = mode === 'horizontal' ? rule.horizontal_prompts : rule.vertical_prompts;
+    const prompts = promptIds
+      .map(id => rules.find(r => r.id === Number(id))?.question)
+      .filter(Boolean) as string[];
     return {
       content: rule.answer,
-      prompts: mode === 'horizontal' ? rule.horizontal_prompts : rule.vertical_prompts
+      prompts
     };
   }
 
@@ -167,6 +180,7 @@ export class ChatService {
   }
 
   async chatWithRuleOrLLM(messages: any[], step: number, recommendMode: 'horizontal' | 'vertical' = 'horizontal') {
+    const rules = this.getRules();
     const userInput = messages[messages.length - 1]?.content || '';
     const ruleResult = this.matchRuleFlat(userInput, recommendMode);
     if (ruleResult) {
@@ -182,17 +196,30 @@ export class ChatService {
         ]
       };
     }
-    // Step >= 6 or no rule matched, use LLM in English
-    const llmPrompt = `Please answer the user's question in no more than 500 English characters, and provide 3 related recommended questions in English, in the following format:\nAnswer content\nSuggestion 1: xxx\nSuggestion 2: xxx\nSuggestion 3: xxx`;
+
+    // 区分 horizontal/vertical，但不在 system prompt 里体现，而是追加一条 user 指令
+    const recommendInstruction = recommendMode === 'horizontal'
+      ? `Please provide 3 cross-topic (related but different topics) recommended questions in the following format, each on a new line. Each question should be no more than 80 characters:
+Suggestion 1: <your first suggested question>
+Suggestion 2: <your second suggested question>
+Suggestion 3: <your third suggested question>`
+      : `Please provide 3 in-depth (follow-up or deeper questions on the same topic) recommended questions in the following format, each on a new line. Each question should be no more than 80 characters:
+Suggestion 1: <your first suggested question>
+Suggestion 2: <your second suggested question>
+Suggestion 3: <your third suggested question>`;
     const llmMessages = [
       ...messages,
-      { role: 'system', content: 'You are a Python learning assistant. Please reply in English.' },
-      { role: 'user', content: llmPrompt }
+      { role: 'user', content: recommendInstruction }
     ];
     const llmResult = await this.chatWithAI(llmMessages);
-    const lines = llmResult.choices[0].message.content.split('\n').filter(Boolean);
-    const content = lines[0];
-    const prompts = lines.slice(1, 4).map((line: string) => line.replace(/^Suggestion \d:|^Suggestion \d：/, '').trim());
+    const contentRaw = llmResult.choices[0].message.content;
+    // 用正则提取三条建议
+    const promptMatches = Array.from(contentRaw.matchAll(/Suggestion \d+:\s*(.+)/g)) as RegExpMatchArray[];
+    const prompts = promptMatches.map(m => m[1].trim()).slice(0, 3);
+    while (prompts.length < 3) prompts.push('');
+    // answer 内容为 Suggestion 1: 之前的部分
+    const suggestionIndex = contentRaw.search(/Suggestion 1:/);
+    const content = suggestionIndex > 0 ? contentRaw.slice(0, suggestionIndex).trim() : contentRaw.trim();
     return {
       choices: [
         {
