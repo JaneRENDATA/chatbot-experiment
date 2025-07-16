@@ -1,0 +1,323 @@
+- id: 1
+  topic: "Python Informal Introduction"
+  question: "What is Python and what can it do?"
+  answer: |
+    Python is a versatile, high-level programming language known for its readability and simplicity.
+    Example:
+    ```python
+    print("Hello, Python!")
+    ```
+  horizontal_prompts:
+    - "What are the basic data types in Python?"
+    - "How do you perform arithmetic operations in Python?"
+    - "How do you write a simple Python program?"
+  vertical_prompts:
+    - "What are the key features of Python?"
+    - "How does Python compare to other languages?"
+    - "What are some real-world applications of Python?"
+
+- id: 2
+  topic: "Basic Data Types"
+  question: "What are the basic data types in Python?"
+  answer: |
+    Python has several basic data types such as int, float, str, and list.
+    Example:
+    ```python
+    a = 10      # int
+    b = 3.14    # float
+    c = "text"  # str
+    d = [1, 2, 3] # list
+    ```
+  horizontal_prompts:
+    - "How do you convert between data types in Python?"
+    - "What are lists and how do you use them?"
+    - "How do you perform string operations in Python?"
+  vertical_prompts:
+    - "What is the difference between int and float?"
+    - "How do you check the type of a variable?"
+    - "How do you create and use lists in Python?"
+
+- id: 3
+  topic: "Basic Operations"
+  question: "How do you perform basic operations in Python?"
+  answer: |
+    Python supports arithmetic operations like addition, subtraction, multiplication, and division.
+    Example:
+    ```python
+    x = 5 + 3   # Addition
+    y = 10 - 2  # Subtraction
+    z = 4 * 2   # Multiplication
+    w = 8 / 2   # Division
+    ```
+  horizontal_prompts:
+    - "How do you use variables in Python?"
+    - "What are comparison operators in Python?"
+    - "How do you perform operations on strings?"
+  vertical_prompts:
+    - "How do you use the modulus operator in Python?"
+    - "How do you perform exponentiation?"
+    - "How do you combine different operations?"
+
+- id: 4
+  topic: "Control Flow Tools"
+  question: "What are control flow tools in Python?"
+  answer: |
+    Control flow tools in Python include if statements, for loops, and while loops, which control the execution of code blocks.
+    Example:
+    ```python
+    if x > 0:
+        print("Positive")
+    for i in range(3):
+        print(i)
+    ```
+  horizontal_prompts:
+    - "How do you use while loops in Python?"
+    - "What is a switch statement and does Python have it?"
+    - "How do you use break and continue?"
+  vertical_prompts:
+    - "How do you write nested if statements?"
+    - "How do you use else and elif?"
+    - "How do you use loops with lists?"
+
+- id: 5
+  topic: "If Statements"
+  question: "How do you use if statements in Python?"
+  answer: |
+    If statements are used to execute code based on conditions.
+    Example:
+    ```python
+    age = 18
+    if age >= 18:
+        print("Adult")
+    else:
+        print("Minor")
+    ```
+  horizontal_prompts:
+    - "How do you use logical operators in conditions?"
+    - "How do you use if statements with lists?"
+    - "How do you use if statements in functions?"
+  vertical_prompts:
+    - "How do you write multiple conditions in an if statement?"
+    - "What is the difference between if, elif, and else?"
+    - "How do you use nested if statements?"
+
+- id: 6
+  topic: "For Loops"
+  question: "How do you use for loops in Python?"
+  answer: |
+    For loops are used to iterate over sequences like lists or strings.
+    Example:
+    ```python
+    for item in [1, 2, 3]:
+        print(item)
+    for char in "abc":
+        print(char)
+    ```
+  horizontal_prompts:
+    - "How do you use while loops?"
+    - "How do you iterate over dictionaries?"
+    - "How do you use enumerate in loops?"
+  vertical_prompts:
+    - "How do you use range() in for loops?"
+    - "How do you use break and continue in loops?"
+    - "How do you write nested for loops?"
+
+- id: 7
+  topic: "Function Definition and Usage"
+  question: "How do you define and use functions in Python?"
+  answer: |
+    Functions are defined using the def keyword and are used to organize code into reusable blocks.
+    Example:
+    ```python
+    def greet(name):
+        return f"Hello, {name}!"
+    print(greet("Alice"))
+    ```
+  horizontal_prompts:
+    - "How do you use lambda functions?"
+    - "How do you pass arguments to functions?"
+    - "How do you return multiple values from a function?"
+  vertical_prompts:
+    - "How do you use default arguments?"
+    - "How do you use *args and **kwargs?"
+    - "How do you write recursive functions?"
+
+- id: 8
+  topic: "List Operations"
+  question: "How do you work with lists in Python?"
+  answer: |
+    Lists are ordered, mutable collections. You can add, remove, and access elements by index.
+    Example:
+    ```python
+    numbers = [1, 2, 3]
+    numbers.append(4)
+    print(numbers[0])
+    numbers.remove(2)
+    print(numbers)
+    ```
+  horizontal_prompts:
+    - "How do you use list comprehensions?"
+    - "How do you sort lists?"
+    - "How do you copy lists?"
+  vertical_prompts:
+    - "How do you access list elements by index?"
+    - "How do you remove elements from a list?"
+    - "How do you iterate over a list?"
+
+- id: 9
+  topic: "Dictionary Usage"
+  question: "How do you use dictionaries in Python?"
+  answer: |
+    Dictionaries are collections of key-value pairs. You can add, access, and remove items by key.
+    Example:
+    ```python
+    person = {"name": "Alice", "age": 25}
+    print(person["name"])
+    person["age"] = 26
+    del person["name"]
+    print(person)
+    ```
+  horizontal_prompts:
+    - "How do you iterate over dictionary items?"
+    - "How do you check if a key exists?"
+    - "How do you merge two dictionaries?"
+  vertical_prompts:
+    - "How do you add new key-value pairs?"
+    - "How do you update values in a dictionary?"
+    - "How do you remove items from a dictionary?"
+
+- id: 10
+  topic: "Tuples and Sets"
+  question: "What are tuples and sets in Python?"
+  answer: |
+    Tuples are immutable sequences, and sets are unordered collections of unique elements.
+    Example:
+    ```python
+    t = (1, 2, 3)
+    s = {1, 2, 3}
+    print(t[0])
+    s.add(4)
+    print(s)
+    ```
+  horizontal_prompts:
+    - "How do you convert between lists, tuples, and sets?"
+    - "How do you use set operations?"
+    - "How do you unpack tuples?"
+  vertical_prompts:
+    - "How do you access tuple elements?"
+    - "How do you add or remove elements from a set?"
+    - "What are the differences between tuples and lists?"
+
+- id: 11
+  topic: "Error and Exception Handling"
+  question: "How do you handle errors and exceptions in Python?"
+  answer: |
+    Errors and exceptions are handled using try, except, and finally blocks.
+    Example:
+    ```python
+    try:
+        x = 1 / 0
+    except ZeroDivisionError:
+        print("Cannot divide by zero.")
+    finally:
+        print("Done.")
+    ```
+  horizontal_prompts:
+    - "What are common exception types in Python?"
+    - "How do you raise exceptions?"
+    - "How do you create custom exceptions?"
+  vertical_prompts:
+    - "How do you use multiple except blocks?"
+    - "How do you use else with try-except?"
+    - "How do you handle exceptions in functions?"
+
+- id: 12
+  topic: "Classes and Object-Oriented Programming"
+  question: "How do you use classes and OOP in Python?"
+  answer: |
+    Classes are blueprints for creating objects. OOP allows you to model real-world entities.
+    Example:
+    ```python
+    class Dog:
+        def __init__(self, name):
+            self.name = name
+        def bark(self):
+            print(f"{self.name} barks!")
+    d = Dog("Buddy")
+    d.bark()
+    ```
+  horizontal_prompts:
+    - "What is inheritance in Python?"
+    - "How do you use class methods and static methods?"
+    - "How do you use properties in classes?"
+  vertical_prompts:
+    - "How do you define instance variables?"
+    - "How do you create multiple objects?"
+    - "How do you override methods?"
+
+- id: 13
+  topic: "Virtual Environments and Package Management"
+  question: "How do you manage virtual environments and packages in Python?"
+  answer: |
+    Virtual environments isolate project dependencies. Use pip to install packages.
+    Example:
+    ```python
+    # Create a virtual environment
+    python -m venv venv
+    # Activate (Windows)
+    venv\Scripts\activate
+    # Activate (Unix)
+    source venv/bin/activate
+    # Install a package
+    pip install requests
+    ```
+  horizontal_prompts:
+    - "How do you list installed packages?"
+    - "How do you uninstall a package?"
+    - "How do you upgrade packages?"
+  vertical_prompts:
+    - "How do you freeze requirements?"
+    - "How do you use requirements.txt?"
+    - "How do you deactivate a virtual environment?"
+
+- id: 14
+  topic: "Input and Output"
+  question: "How do you handle input and output in Python?"
+  answer: |
+    Use input() for user input and print() for output. For files, use open(), read(), and write().
+    Example:
+    ```python
+    name = input("Enter your name: ")
+    print(f"Hello, {name}!")
+    with open("file.txt", "w") as f:
+        f.write("Hello, file!")
+    ```
+  horizontal_prompts:
+    - "How do you read from a file?"
+    - "How do you write to a file?"
+    - "How do you handle file exceptions?"
+  vertical_prompts:
+    - "How do you append to a file?"
+    - "How do you read a file line by line?"
+    - "How do you check if a file exists?"
+
+- id: 15
+  topic: "Standard Library Overview"
+  question: "What is the Python standard library?"
+  answer: |
+    The Python standard library is a collection of modules and packages included with Python, providing tools for various tasks.
+    Example:
+    ```python
+    import math
+    print(math.sqrt(16))
+    import datetime
+    print(datetime.datetime.now())
+    ```
+  horizontal_prompts:
+    - "What are some useful modules in the standard library?"
+    - "How do you use the os module?"
+    - "How do you use the random module?"
+  vertical_prompts:
+    - "How do you import a module?"
+    - "How do you find documentation for a module?"
+    - "How do you use help() to learn about modules?" 

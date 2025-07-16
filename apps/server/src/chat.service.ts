@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DeepSeekService } from './deepseek.service';
 import { Response } from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as yaml from 'js-yaml';
 
 // 多层级规则树类型
 interface RuleNode {
@@ -9,189 +12,42 @@ interface RuleNode {
   prompts: { text: string; next?: RuleNode }[];
 }
 
+interface FlatRule {
+  id: number;
+  topic: string;
+  question: string;
+  answer: string;
+  horizontal_prompts: string[];
+  vertical_prompts: string[];
+}
+
 @Injectable()
 export class ChatService {
-  constructor(private readonly deepSeekService: DeepSeekService) {}
+  private rules: FlatRule[] = [];
 
-  public pythonLearningRoot: RuleNode = {
-    pattern: /(learn python|python beginner|python basics|how to learn python|python tutorial)/i,
-    response: "Welcome to learning Python! Python is a simple, powerful programming language that's great for beginners.",
-    prompts: [
-      {
-        text: "What are the common data types in Python?",
-        next: {
-          pattern: /data types?/i,
-          response: "Common Python data types include: int, float, str, list, tuple, dict, and set.",
-          prompts: [
-            {
-              text: "What's the difference between a list and a tuple?",
-              next: {
-                pattern: /list.*tuple|tuple.*list/i,
-                response: "A list is mutable, whereas a tuple is immutable. Lists use [ ], tuples use ( ).",
-                prompts: [
-                  {
-                    text: "How do you create a list in Python?",
-                    next: {
-                      pattern: /create.*list|list.*create/i,
-                      response: "You can create a list using square brackets, e.g., my_list = [1, 2, 3]",
-                      prompts: [
-                        {
-                          text: "How do you add an item to a list?",
-                          next: {
-                            pattern: /add.*item.*list|list.*add.*item/i,
-                            response: "You can add an item to a list using the append() method, e.g., my_list.append(4)",
-                            prompts: [
-                              { text: "How do you remove an item from a list?" },
-                              { text: "How do you get the length of a list?" },
-                              { text: "How do you sort a list?" }
-                            ]
-                          }
-                        },
-                        { text: "How do you remove an item from a list?" },
-                        { text: "How do you get the length of a list?" }
-                      ]
-                    }
-                  },
-                  {
-                    text: "How do you convert a list to a tuple?",
-                    next: {
-                      pattern: /convert.*list.*tuple|list.*to.*tuple/i,
-                      response: "You can convert a list to a tuple using tuple(my_list)",
-                      prompts: [
-                        { text: "How do you convert a tuple to a list?" },
-                        { text: "What are the advantages of tuples?" },
-                        { text: "Can a tuple contain a list?" }
-                      ]
-                    }
-                  },
-                  {
-                    text: "When should you use a tuple instead of a list?",
-                    next: {
-                      pattern: /use.*tuple.*instead.*list|tuple.*vs.*list/i,
-                      response: "Use a tuple when you need an immutable sequence of items.",
-                      prompts: [
-                        { text: "What is immutability in Python?" },
-                        { text: "How do you check if a tuple is immutable?" },
-                        { text: "Can you change a tuple after creation?" }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              text: "How do you iterate over a dict?",
-              next: {
-                pattern: /iterate.*dict|dict.*iterate/i,
-                response: "You can iterate over a dict using a for loop: for key, value in my_dict.items(): ...",
-                prompts: [
-                  {
-                    text: "How do you get all the keys in a dict?",
-                    next: {
-                      pattern: /get.*keys.*dict|dict.*keys/i,
-                      response: "Use my_dict.keys() to get all the keys in a dict.",
-                      prompts: [
-                        { text: "How do you get all the values in a dict?" },
-                        { text: "How do you check if a key exists in a dict?" },
-                        { text: "How do you remove a key from a dict?" }
-                      ]
-                    }
-                  },
-                  { text: "How do you check if a key exists in a dict?" },
-                  { text: "How do you remove a key from a dict?" }
-                ]
-              }
-            },
-            {
-              text: "How can I check a variable's type?",
-              next: {
-                pattern: /check.*type|type.*check/i,
-                response: "Use the type() function: type(variable)",
-                prompts: [
-                  {
-                    text: "How do you check if a variable is a string?",
-                    next: {
-                      pattern: /check.*string|string.*check/i,
-                      response: "Use isinstance(variable, str) to check if a variable is a string.",
-                      prompts: [
-                        { text: "How do you check if a variable is a number?" },
-                        { text: "How do you check if a variable is a list?" },
-                        { text: "How do you check if a variable is None?" }
-                      ]
-                    }
-                  },
-                  { text: "How do you check if a variable is a list?" },
-                  { text: "How do you check if a variable is None?" }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      {
-        text: "How do I write a Hello World in Python?",
-        next: {
-          pattern: /hello world/i,
-          response: "You can write a Hello World in Python like this:\n```python\nprint('Hello World')\n```",
-          prompts: [
-            {
-              text: "How do you define a variable in Python?",
-              next: {
-                pattern: /define.*variable|variable.*define/i,
-                response: "You define a variable by assigning a value: x = 5",
-                prompts: [
-                  { text: "How do you change a variable's value?" },
-                  { text: "What are variable naming rules in Python?" },
-                  { text: "Can variable names start with a number?" }
-                ]
-              }
-            },
-            { text: "How do you take input and output in Python?" },
-            { text: "How do you write multi-line comments?" }
-          ]
-        }
-      },
-      {
-        text: "How does the for loop work in Python?",
-        next: {
-          pattern: /for loop/i,
-          response: "A for loop in Python looks like this:\n```python\nfor i in range(5):\n    print(i)\n```",
-          prompts: [
-            {
-              text: "What are the uses of range()?",
-              next: {
-                pattern: /uses.*range|range.*uses/i,
-                response: "range() is used to generate a sequence of numbers, often used in for loops.",
-                prompts: [
-                  { text: "How do you use range() with a step?" },
-                  { text: "How do you use range() to count down?" },
-                  { text: "Can you use range() with floats?" }
-                ]
-              }
-            },
-            { text: "How do you loop through a list?" },
-            { text: "How do you use nested for loops?" }
-          ]
-        }
-      }
-    ]
-  };
+  constructor(private readonly deepSeekService: DeepSeekService) {
+    // 只读取平铺结构的 rule-based.yaml
+    const filePath = path.join(__dirname, 'rules', 'rule-based.yaml');
+    const raw = fs.readFileSync(filePath, 'utf8');
+    this.rules = yaml.load(raw) as FlatRule[];
+  }
 
-  public matchRuleTree(input: string, node: RuleNode, step: number): { content: string; prompts: string[] } | null {
-    if (step > 5) return null;
-    if (node.pattern.test(input)) {
-      return {
-        content: node.response,
-        prompts: node.prompts.map(p => p.text)
-      };
-    }
-    for (const prompt of node.prompts) {
-      if (prompt.next) {
-        const result = this.matchRuleTree(input, prompt.next, step + 1);
-        if (result) return result;
-      }
-    }
-    return null;
+  // 查找知识点，支持模糊匹配
+  private findRule(input: string): FlatRule | undefined {
+    input = input.toLowerCase();
+    return this.rules.find(rule =>
+      rule.question.toLowerCase().includes(input) ||
+      rule.topic.toLowerCase().includes(input)
+    );
+  }
+
+  public matchRuleFlat(input: string, mode: 'horizontal' | 'vertical' = 'horizontal'): { content: string; prompts: string[] } | null {
+    const rule = this.findRule(input);
+    if (!rule) return null;
+    return {
+      content: rule.answer,
+      prompts: mode === 'horizontal' ? rule.horizontal_prompts : rule.vertical_prompts
+    };
   }
 
   async chatWithAI(messages: any[]) {
@@ -310,9 +166,9 @@ export class ChatService {
     }
   }
 
-  async chatWithRuleOrLLM(messages: any[], step: number) {
+  async chatWithRuleOrLLM(messages: any[], step: number, recommendMode: 'horizontal' | 'vertical' = 'horizontal') {
     const userInput = messages[messages.length - 1]?.content || '';
-    const ruleResult = this.matchRuleTree(userInput, this.pythonLearningRoot, step);
+    const ruleResult = this.matchRuleFlat(userInput, recommendMode);
     if (ruleResult) {
       return {
         choices: [

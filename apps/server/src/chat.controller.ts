@@ -7,14 +7,15 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post()
-  async chat(@Body() body: { messages: any[], step?: number }) {
+  async chat(@Body() body: { messages: any[], step?: number, recommendMode?: 'horizontal' | 'vertical' }) {
     try {
       if (!body.messages || !Array.isArray(body.messages)) {
         throw new HttpException('Messages array is required', HttpStatus.BAD_REQUEST);
       }
       // 取step参数，默认1
       const step = typeof body.step === 'number' ? body.step : 1;
-      return await this.chatService.chatWithRuleOrLLM(body.messages, step);
+      const recommendMode = body.recommendMode === 'vertical' ? 'vertical' : 'horizontal';
+      return await this.chatService.chatWithRuleOrLLM(body.messages, step, recommendMode);
     } catch (error: any) {
       console.error('Chat controller error:', error);
       if (error instanceof HttpException) {
@@ -38,9 +39,10 @@ export class ChatController {
     res.flushHeaders();
 
     const step = typeof body.step === 'number' ? body.step : 1;
+    const recommendMode = body.recommendMode === 'vertical' ? 'vertical' : 'horizontal';
     const userInput = body.messages[body.messages.length - 1]?.content || '';
-    // 规则树流式模拟
-    const ruleResult = this.chatService.matchRuleTree(userInput, this.chatService.pythonLearningRoot, step);
+    // 规则平铺流式模拟
+    const ruleResult = this.chatService.matchRuleFlat(userInput, recommendMode);
     if (ruleResult) {
       const text = ruleResult.content;
       for (let i = 0; i < text.length; i++) {
@@ -53,7 +55,7 @@ export class ChatController {
       return;
     }
     // LLM流式兜底，先获取 prompts 和 source
-    const llmResult = await this.chatService.chatWithRuleOrLLM(body.messages, step);
+    const llmResult = await this.chatService.chatWithRuleOrLLM(body.messages, step, recommendMode);
     const prompts = llmResult.choices?.[0]?.message?.prompts || [];
     const source = llmResult.choices?.[0]?.message?.source || 'llm';
     await this.chatService.streamWithAI({ ...body, prompts, source }, res);

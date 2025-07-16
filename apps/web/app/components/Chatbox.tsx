@@ -61,6 +61,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
   const [tempPrompt, setTempPrompt] = useState(prompt);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [recommendMode, setRecommendMode] = useState<'horizontal' | 'vertical'>('horizontal');
 
   // 聊天记录持久化
   useEffect(() => {
@@ -115,7 +116,8 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
         ...messages.map(msg => ({ role: msg.isUser ? 'user' : 'assistant', content: msg.text })),
         { role: 'user', content: input }
       ],
-      step
+      step,
+      recommendMode // 新增推荐方式参数
     };
 
     // 先插入一个空的 AI 消息
@@ -187,10 +189,25 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
 
   return (
     <div className="flex flex-col h-[90vh] w-[70vw] max-w-none mx-auto bg-white rounded-2xl shadow border border-gray-200 p-6 relative">
-      {/* Prompt settings and current prompt display */}
-      <div className="flex items-center mb-4">
+      {/* 推荐方式切换按钮 */}
+      <div className="flex items-center mb-4 gap-2">
         <button
-          className="px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
+          className={`px-3 py-1 rounded border transition ${recommendMode === 'horizontal' ? 'bg-green-200 text-green-900 border-green-300' : 'bg-gray-100 text-gray-700 border-gray-300'}`}
+          onClick={() => setRecommendMode('horizontal')}
+          disabled={isLoading}
+        >
+          Horizontal (Cross-topic)
+        </button>
+        <button
+          className={`px-3 py-1 rounded border transition ${recommendMode === 'vertical' ? 'bg-purple-200 text-purple-900 border-purple-300' : 'bg-gray-100 text-gray-700 border-gray-300'}`}
+          onClick={() => setRecommendMode('vertical')}
+          disabled={isLoading}
+        >
+          Vertical (In-depth)
+        </button>
+        {/* Prompt settings and current prompt display */}
+        <button
+          className="ml-2 px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
           onClick={() => setShowClearConfirm(true)}
         >
           Clear History
