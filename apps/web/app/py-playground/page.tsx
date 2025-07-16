@@ -150,6 +150,7 @@ stderr_buffer.close()
     setStderr('');
   };
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const CodeMirror = codeMirror;
 
   return (

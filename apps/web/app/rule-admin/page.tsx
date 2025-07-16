@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-interface Rule {
+interface IRule {
   id: number;
   topic: string;
   position: string;
@@ -13,33 +13,33 @@ interface Rule {
 }
 
 const RuleAdminPage: React.FC = () => {
-  const [rules, setRules] = useState<Rule[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [rules, setRules] = useState<IRule[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalRule, setModalRule] = useState<Rule | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [modalRule, setModalRule] = useState<IRule | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetch('/api/rules')
       .then(res => res.json())
       .then(data => {
         setRules(data.rules || []);
-        setLoading(false);
+        setIsLoading(false);
       })
-      .catch(err => {
+      .catch(() => {
         setError('Failed to load rules');
-        setLoading(false);
+        setIsLoading(false);
       });
   }, []);
 
-  const handleEdit = (rule: Rule) => {
+  const handleEdit = (rule: IRule) => {
     setModalRule(rule);
-    setShowModal(true);
+    setIsShowModal(true);
   };
 
-  const handleSave = async (updatedRule: Rule) => {
-    setSaving(true);
+  const handleSave = async (updatedRule: IRule) => {
+    setIsSaving(true);
     try {
       const newRules = rules.map(r => r.id === updatedRule.id ? updatedRule : r);
       const res = await fetch('/api/rules', {
@@ -49,18 +49,18 @@ const RuleAdminPage: React.FC = () => {
       });
       if (!res.ok) throw new Error('Failed to save');
       setRules(newRules);
-      setShowModal(false);
-    } catch (err) {
+      setIsShowModal(false);
+    } catch (e) {
       alert('Failed to save changes.');
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   };
 
   return (
     <div className="flex flex-col h-[90vh] w-[70vw] max-w-none mx-auto bg-white rounded-2xl shadow border border-gray-200 p-6 relative">
       <h1 className="text-2xl font-bold mb-6 text-black">Rule-based Knowledge Management</h1>
-      {loading && <div>Loading...</div>}
+      {isLoading && <div>Loading...</div>}
       {error && <div className="text-red-500">{error}</div>}
       <div className="flex-1 overflow-auto">
         <table className="w-full border text-sm rounded-xl shadow-sm overflow-x-auto min-w-[700px]">
@@ -93,7 +93,7 @@ const RuleAdminPage: React.FC = () => {
         </table>
       </div>
       {/* 编辑弹窗 */}
-      {showModal && modalRule && (
+      {isShowModal && modalRule && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg">
             <h2 className="text-lg font-semibold mb-4 text-black">Edit Rule #{modalRule.id}</h2>
@@ -160,17 +160,17 @@ const RuleAdminPage: React.FC = () => {
                 <button
                   type="button"
                   className="px-4 py-1 rounded bg-gray-100 text-black border border-gray-300 hover:bg-gray-200"
-                  onClick={() => setShowModal(false)}
-                  disabled={saving}
+                  onClick={() => setIsShowModal(false)}
+                  disabled={isSaving}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-1 rounded bg-blue-600 text-white border border-blue-700 hover:bg-blue-700 disabled:opacity-60"
-                  disabled={saving}
+                  disabled={isSaving}
                 >
-                  {saving ? 'Saving...' : 'Save'}
+                  {isSaving ? 'Saving...' : 'Save'}
                 </button>
               </div>
             </form>

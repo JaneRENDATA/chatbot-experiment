@@ -188,9 +188,16 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
               const delta = json.choices?.[0]?.delta;
               if (delta?.content) {
                 aiText += delta.content; // 逐步追加，保证流式体验
-                setMessages(prev => prev.map(msg =>
-                  msg.id === aiMsgId ? { ...msg, text: aiText } : msg
-                ));
+                // 新增：如果 source 字段存在且为 'rule'，立刻更新 msg.source
+                if (json.choices?.[0]?.source === 'rule') {
+                  setMessages(prev => prev.map(msg =>
+                    msg.id === aiMsgId ? { ...msg, text: aiText, source: 'rule' } : msg
+                  ));
+                } else {
+                  setMessages(prev => prev.map(msg =>
+                    msg.id === aiMsgId ? { ...msg, text: aiText } : msg
+                  ));
+                }
                 if (firstChunk) {
                   setShowLoading(false);
                   firstChunk = false;
@@ -224,33 +231,46 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
     <div className="flex flex-col h-[90vh] w-[70vw] max-w-none mx-auto bg-white rounded-2xl shadow border border-gray-200 p-6 relative">
       {/* 推荐方式切换按钮 */}
       <div className="flex items-center mb-4 gap-2">
-        <button
-          className={`px-3 py-1 rounded border transition ${recommendMode === 'horizontal' ? 'bg-green-200 text-green-900 border-green-300' : 'bg-gray-100 text-gray-700 border-gray-300'}`}
-          onClick={() => setRecommendMode('horizontal')}
-          disabled={isLoading}
-        >
-          Version A (cross-topic)
-        </button>
-        <button
-          className={`px-3 py-1 rounded border transition ${recommendMode === 'vertical' ? 'bg-purple-200 text-purple-900 border-purple-300' : 'bg-gray-100 text-gray-700 border-gray-300'}`}
-          onClick={() => setRecommendMode('vertical')}
-          disabled={isLoading}
-        >
-          Version B (in-depth)
-        </button>
-        {/* Prompt settings and current prompt display */}
-        <button
-          className="ml-2 px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
-          onClick={() => setShowClearConfirm(true)}
-        >
-          Clear History
-        </button>
-        <button
-          className="ml-2 px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
-          onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
-        >
-          Edit Prompt
-        </button>
+        {/* Version buttons group */}
+        <div className="flex gap-2">
+          <button
+            className={`px-3 py-1 rounded border font-medium transition duration-150
+              ${recommendMode === 'horizontal'
+                ? 'bg-green-500 text-white border-green-600 shadow-md'
+                : 'bg-gray-100 text-green-700 border-green-300 hover:bg-green-50'}
+            `}
+            onClick={() => setRecommendMode('horizontal')}
+            disabled={isLoading}
+          >
+            Version A (cross-topic)
+          </button>
+          <button
+            className={`px-3 py-1 rounded border font-medium transition duration-150
+              ${recommendMode === 'vertical'
+                ? 'bg-purple-500 text-white border-purple-600 shadow-md'
+                : 'bg-gray-100 text-purple-700 border-purple-300 hover:bg-purple-50'}
+            `}
+            onClick={() => setRecommendMode('vertical')}
+            disabled={isLoading}
+          >
+            Version B (in-depth)
+          </button>
+        </div>
+        {/* Edit/Clear group，增加更大间距 */}
+        <div className="flex gap-2 ml-8">
+          <button
+            className="px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
+            onClick={() => setShowClearConfirm(true)}
+          >
+            Clear History
+          </button>
+          <button
+            className="px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
+            onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
+          >
+            Edit Prompt
+          </button>
+        </div>
         <span className="ml-4 text-xs text-gray-400 truncate max-w-[60%]" title={prompt}>
           Current Prompt: {prompt}
         </span>

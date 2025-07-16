@@ -8,7 +8,7 @@
     Installation: Download from the official site and run the installer.
     Running: Use the interactive shell or run .py files.
     Syntax: Indentation defines structure.
-    
+
     Example:
     ```python
     print("Hello World")
@@ -17,9 +17,9 @@
         print("Indented")
     ```
   horizontal_prompts:
-    - 9
-    - 10
-    - 12
+    - '10'
+    - '12'
+    - '8'
   vertical_prompts:
     - 2
     - 3

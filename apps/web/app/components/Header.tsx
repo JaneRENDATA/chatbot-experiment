@@ -2,12 +2,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
 const Header: React.FC = () => {
-  const [isProductsOpen, setIsProductsOpen] = useState(false);
-  const [isResourcesOpen, setIsResourcesOpen] = useState(false);
 
   return (
     <header className="bg-base-200 text-base-content shadow-lg mb-4">
