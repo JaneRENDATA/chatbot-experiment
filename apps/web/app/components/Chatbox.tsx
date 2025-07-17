@@ -11,7 +11,7 @@ import { CHAT_BASE_URL, CHAT_ENDPOINT } from '../../../../libs/shared/config/con
 import ReactMarkdown from 'react-markdown';
 import CodeBlock from './CodeBlock';
 
-const DEFAULT_PROMPT = 'You are a specialized Python tutor. max 200 characters one response.';
+const DEFAULT_PROMPT = 'You are a Python tutor. max 200 characters per response.';
 
 interface IMessage {
   id: number;
@@ -60,7 +60,16 @@ function processParagraphs(str: string) {
 // 定义高阶函数生成 p 组件
 function createParagraph(isRule: boolean) {
   return function P({ children }: { children: React.ReactNode }) {
-    return <p style={{ margin: '0 0 0.2em 0', lineHeight: isRule ? 1.7 : 0.9 }}>{children}</p>;
+    // 判断是否是空行
+    const isEmpty = React.Children.toArray(children).every(
+      child => typeof child === 'string' && child.trim() === ''
+    );
+    if (isEmpty) {
+      // 空行，行距为0.8
+      return <p style={{ margin: '0', lineHeight: 0.8, minHeight: '1em' }}>{children}</p>;
+    }
+    // 普通行，rule和LLM都为1.5
+    return <p style={{ margin: '0 0 0.2em 0', lineHeight: 1.5 }}>{children}</p>;
   };
 }
 
