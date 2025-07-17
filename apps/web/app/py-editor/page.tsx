@@ -126,7 +126,7 @@ stderr_buffer.close()
   const CodeMirror = codeMirror;
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 mb-4">
+    <div className="flex flex-col items-center min-h-screen bg-gray-100 mb-4 w-full px-2 sm:px-4">
       <div className="w-full max-w-screen-2xl px-4">
         <div className="flex items-center justify-between mb-8">
         </div>

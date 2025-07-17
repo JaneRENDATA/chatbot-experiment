@@ -11,7 +11,7 @@ import { CHAT_BASE_URL, CHAT_ENDPOINT } from '../../../../libs/shared/config/con
 import ReactMarkdown from 'react-markdown';
 import CodeBlock from './CodeBlock';
 
-const DEFAULT_PROMPT = 'You are a Python tutor focused on teaching through connected concepts. When learners ask questions, show how different Python elements work together to solve problems. Start with the big picture, then demonstrate how basic concepts combine to create solutions. Use real-world examples to show concept relationships. Guide learners to discover patterns across different Python features. Encourage experimentation and help learners see multiple ways to solve problems. Always connect new learning to practical applications.';
+const DEFAULT_PROMPT = 'You are a specialized Python tutor. max 200 characters one response.';
 
 interface IMessage {
   id: number;
@@ -228,49 +228,43 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
   };
 
   return (
-    <div className="flex flex-col h-[90vh] w-[70vw] max-w-none mx-auto bg-white rounded-2xl shadow border border-gray-200 p-6 relative">
+    <div className="w-full sm:w-[70vw] max-w-none mx-auto px-0 sm:px-4 flex flex-col bg-white sm:rounded-2xl sm:shadow sm:border sm:border-gray-200 sm:p-6 p-2">
       {/* 推荐方式切换按钮 */}
-      <div className="flex items-center mb-4 gap-2">
-        {/* Version buttons group */}
-        <div className="flex gap-2">
-          <button
-            className={`px-3 py-1 rounded border font-medium transition duration-150
-              ${recommendMode === 'horizontal'
-                ? 'bg-green-500 text-white border-green-600 shadow-md'
-                : 'bg-gray-100 text-green-700 border-green-300 hover:bg-green-50'}
-            `}
-            onClick={() => setRecommendMode('horizontal')}
-            disabled={isLoading}
-          >
-            Version A (cross-topic)
-          </button>
-          <button
-            className={`px-3 py-1 rounded border font-medium transition duration-150
-              ${recommendMode === 'vertical'
-                ? 'bg-purple-500 text-white border-purple-600 shadow-md'
-                : 'bg-gray-100 text-purple-700 border-purple-300 hover:bg-purple-50'}
-            `}
-            onClick={() => setRecommendMode('vertical')}
-            disabled={isLoading}
-          >
-            Version B (in-depth)
-          </button>
-        </div>
-        {/* Edit/Clear group，增加更大间距 */}
-        <div className="flex gap-2 ml-8">
-          <button
-            className="px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
-            onClick={() => setShowClearConfirm(true)}
-          >
-            Clear History
-          </button>
-          <button
-            className="px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
-            onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
-          >
-            Edit Prompt
-          </button>
-        </div>
+      <div className="flex flex-wrap w-full items-center mb-4 gap-2">
+        <button
+          className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
+            ${recommendMode === 'horizontal'
+              ? 'bg-green-500 text-white border-green-600 shadow-md'
+              : 'bg-gray-100 text-green-700 border-green-300 hover:bg-green-50'}
+          `}
+          onClick={() => setRecommendMode('horizontal')}
+          disabled={isLoading}
+        >
+          Version A (cross-topic)
+        </button>
+        <button
+          className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
+            ${recommendMode === 'vertical'
+              ? 'bg-purple-500 text-white border-purple-600 shadow-md'
+              : 'bg-gray-100 text-purple-700 border-purple-300 hover:bg-purple-50'}
+          `}
+          onClick={() => setRecommendMode('vertical')}
+          disabled={isLoading}
+        >
+          Version B (in-depth)
+        </button>
+        <button
+          className="flex-1 min-w-[80px] max-w-full px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
+          onClick={() => setShowClearConfirm(true)}
+        >
+          Clear History
+        </button>
+        <button
+          className="flex-1 min-w-[80px] max-w-full px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
+          onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
+        >
+          Edit Prompt
+        </button>
         <span className="ml-4 text-xs text-gray-400 truncate max-w-[60%]" title={prompt}>
           Current Prompt: {prompt}
         </span>

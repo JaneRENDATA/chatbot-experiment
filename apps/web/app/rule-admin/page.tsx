@@ -58,8 +58,8 @@ const RuleAdminPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[90vh] w-[70vw] max-w-none mx-auto bg-white rounded-2xl shadow border border-gray-200 p-6 relative">
-      <h1 className="text-2xl font-bold mb-6 text-black">Rule-based Knowledge Management</h1>
+    <div className="flex flex-col h-[90vh] w-full max-w-screen-lg mx-auto bg-white rounded-2xl shadow border border-gray-200 p-2 sm:p-6 relative">
+      <h1 className="text-lg sm:text-2xl font-bold mb-6 text-black">Rule-based Knowledge Management</h1>
       {isLoading && <div>Loading...</div>}
       {error && <div className="text-red-500">{error}</div>}
       <div className="flex-1 overflow-auto">
