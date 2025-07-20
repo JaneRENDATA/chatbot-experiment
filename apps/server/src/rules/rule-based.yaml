@@ -1,1425 +1,2117 @@
 - id: 1
-  topic: Python Basics
-  position: FUNDAMENTALS - Chapter 2
-  question: What are the basic components of Python?
-  answer: |
-    Python basics include:
+  position: 3.1.1.1 Integer operations
+  question: How are integers used in Python?
+  answer: 'Integers in Python are whole numbers without decimal points. Basic arithmetic
+    operations include addition, subtraction, and multiplication:
 
-    Installation: Download from the official site and run the installer.
-    Running: Use the interactive shell or run .py files.
-    Syntax: Indentation defines structure.
+    ```python
 
-    Example:
-    ```python
-    print("Hello World")
-    # Basic indentation
-    if True:
-        print("Indented")
-    ```
-  horizontal_prompts:
-    - '10'
-    - '12'
-    - '8'
-  vertical_prompts:
-    - 2
-    - 3
-    - 4
-- id: 2
-  topic: Python Interpreter Basics
-  position: FUNDAMENTALS - Chapter 2.1
-  question: How do you use the Python interpreter?
-  answer: |
-    The Python interpreter can be used in two modes:
-    ```python
-    # Script mode: python script.py
-    # Interactive mode:
-    >>> print("Hello World")
-    >>> 2 + 2
-    ```
-  horizontal_prompts:
-    - 3
-    - 4
-    - 5
-  vertical_prompts:
-    - 6
-    - 7
-    - 8
-- id: 3
-  topic: Basic Data Types - Numbers
-  position: FUNDAMENTALS - Chapter 3.1
-  question: How do you work with numbers in Python?
-  answer: |
-    Python supports integers and floating-point numbers:
-    ```python
-    x = 5        # integer
-    y = 3.14     # float
-    z = x + y    # basic arithmetic
-    print(type(z))
-    ```
-  horizontal_prompts:
-    - 2
-    - 4
-    - 5
-  vertical_prompts:
-    - 6
-    - 7
-    - 8
-- id: 4
-  topic: Basic Data Types - Strings
-  position: FUNDAMENTALS - Chapter 3.1
-  question: How do you handle text in Python?
-  answer: |
-    Strings are immutable sequences of characters:
-    ```python
-    text = "Hello, Python!"
-    print(text.upper())
-    print(text[0:5])
-    print(f"Length: {len(text)}")
-    ```
-  horizontal_prompts:
-    - 2
-    - 3
-    - 5
-  vertical_prompts:
-    - 6
-    - 7
-    - 8
-- id: 5
-  topic: Basic Data Types - Lists
-  position: FUNDAMENTALS - Chapter 3.1
-  question: How do you create and use lists?
-  answer: |
-    Lists are mutable sequences:
-    ```python
-    numbers = [1, 2, 3, 4, 5]
-    numbers.append(6)
-    numbers[0] = 10
-    print(numbers)
-    ```
-  horizontal_prompts:
-    - 2
-    - 3
-    - 4
-  vertical_prompts:
-    - 6
-    - 7
-    - 8
-- id: 6
-  topic: Basic Operations
-  position: FUNDAMENTALS - Chapter 3.1
-  question: What are the basic operations in Python?
-  answer: |
-    Basic operations include arithmetic and comparisons:
-    ```python
-    x = 10
+    x = 5
+
     y = 3
-    print(x + y)    # addition
-    print(x * y)    # multiplication
-    print(x > y)    # comparison
+
+    print(x + y)  # 8
+
+    print(x - y)  # 2
+
+    print(x * y)  # 15
+
     ```
-  horizontal_prompts:
-    - 7
-    - 8
-    - 9
+
+    '
   vertical_prompts:
-    - 11
-    - 12
-    - 13
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  horizontal_prompts:
+  - 59
+  - 43
+  - 19
+  - 23
+  - 81
+- id: 2
+  position: 3.1.1.2 Float operations
+  question: How are floating-point numbers used in Python?
+  answer: 'Floating-point numbers represent numbers with decimal points. Division
+    using `/` returns a float, and `//` returns the integer part:
+
+    ```python
+
+    a = 7.0
+
+    b = 3.0
+
+    print(a / b)   # 2.333...
+
+    print(a // b)  # 2.0
+
+    ```
+
+    '
+  vertical_prompts:
+  - 1
+  - 3
+  - 4
+  - 5
+  - 6
+  horizontal_prompts:
+  - 51
+  - 82
+  - 69
+  - 32
+  - 23
+- id: 3
+  position: 3.1.1.3 Division types (/ and //)
+  question: What are the different types of division in Python?
+  answer: 'Python supports two types of division: regular division `/` returns a float,
+    and floor division `//` returns the integer part of the quotient:
+
+    ```python
+
+    print(7 / 3)   # 2.333...
+
+    print(7 // 3)  # 2
+
+    ```
+
+    '
+  vertical_prompts:
+  - 1
+  - 2
+  - 4
+  - 5
+  - 6
+  horizontal_prompts:
+  - 51
+  - 59
+  - 19
+  - 32
+  - 43
+- id: 4
+  position: 3.1.1.4 Modulo operator (%)
+  question: How is the modulo operator (%) used in Python?
+  answer: 'The modulo operator `%` returns the remainder of a division operation:
+
+    ```python
+
+    print(7 % 3)  # 1
+
+    print(10 % 4) # 2
+
+    ```
+
+    '
+  vertical_prompts:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 6
+  horizontal_prompts:
+  - 59
+  - 23
+  - 82
+  - 81
+  - 43
+- id: 5
+  position: 3.1.1.5 Power operator (**)
+  question: How is the power operator (**) used in Python?
+  answer: 'The power operator `**` raises a number to the power of another number:
+
+    ```python
+
+    print(2 ** 3)  # 8
+
+    print(5 ** 2)  # 25
+
+    ```
+
+    '
+  vertical_prompts:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 6
+  horizontal_prompts:
+  - 81
+  - 23
+  - 19
+  - 32
+  - 59
+- id: 6
+  position: 3.1.2.1 String literals
+  question: How are string literals defined in Python?
+  answer: 'String literals are sequences of characters enclosed in single or double
+    quotes:
+
+    ```python
+
+    s1 = ''Hello''
+
+    s2 = "World"
+
+    ```
+
+    '
+  vertical_prompts:
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  horizontal_prompts:
+  - 81
+  - 23
+  - 19
+  - 51
+  - 76
 - id: 7
-  topic: Variable Assignment
-  position: FUNDAMENTALS - Chapter 3.2
-  question: How do you assign values to variables?
-  answer: |
-    Variables are assigned using the = operator:
+  position: 3.1.2.2 String concatenation
+  question: How are strings concatenated in Python?
+  answer: 'Strings can be concatenated using the `+` operator:
+
     ```python
-    name = "Alice"
-    age = 25
-    is_student = True
+
+    s = ''Hello'' + '' '' + ''World''
+
+    print(s)  # Hello World
+
     ```
-  horizontal_prompts:
-    - 6
-    - 8
-    - 9
+
+    '
   vertical_prompts:
-    - 11
-    - 12
-    - 13
+  - 6
+  - 8
+  - 9
+  - 10
+  - 11
+  horizontal_prompts:
+  - 59
+  - 69
+  - 19
+  - 23
+  - 51
 - id: 8
-  topic: Basic Input/Output
-  position: FUNDAMENTALS - Chapter 3.2
-  question: How do you handle basic input and output?
-  answer: |
-    Use print() for output and input() for input:
+  position: 3.1.2.3 String indexing
+  question: How is string indexing performed in Python?
+  answer: 'String indexing allows access to individual characters using square brackets:
+
     ```python
-    name = input("Enter your name: ")
-    print(f"Hello, {name}!")
+
+    s = ''Python''
+
+    print(s[0])  # P
+
+    print(s[-1]) # n
+
     ```
-  horizontal_prompts:
-    - 6
-    - 7
-    - 9
+
+    '
   vertical_prompts:
-    - 11
-    - 12
-    - 13
+  - 6
+  - 7
+  - 9
+  - 10
+  - 11
+  horizontal_prompts:
+  - 76
+  - 32
+  - 19
+  - 59
+  - 43
 - id: 9
-  topic: Comments and Documentation
-  position: FUNDAMENTALS - Chapter 3.2
-  question: How do you add comments in Python?
-  answer: |
-    Use # for single-line and ''' for multi-line comments:
+  position: 3.1.2.4 String slicing
+  question: How is string slicing used in Python?
+  answer: 'String slicing extracts a substring using a range of indices:
+
     ```python
-    # This is a single-line comment
-    '''
-    This is a
-    multi-line comment
-    '''
+
+    s = ''Python''
+
+    print(s[1:4])  # yth
+
+    print(s[:2])   # Py
+
     ```
-  horizontal_prompts:
-    - 6
-    - 7
-    - 8
+
+    '
   vertical_prompts:
-    - 11
-    - 12
-    - 13
+  - 6
+  - 7
+  - 8
+  - 10
+  - 11
+  horizontal_prompts:
+  - 19
+  - 69
+  - 23
+  - 51
+  - 59
 - id: 10
-  topic: Basic Program Structure
-  position: FUNDAMENTALS - Chapter 3.2
-  question: What is the basic structure of a Python program?
-  answer: |
-    Basic program structure includes statements and blocks:
+  position: 3.1.2.5 String length
+  question: How is the length of a string determined in Python?
+  answer: 'The `len()` function returns the number of characters in a string:
+
     ```python
-    # Imports
-    import math
 
-    # Variables
-    radius = 5
+    s = ''Python''
 
-    # Calculations
-    area = math.pi * radius ** 2
+    print(len(s))  # 6
 
-    # Output
-    print(f"Area: {area}")
     ```
-  horizontal_prompts:
-    - 1
-    - 2
-    - 3
+
+    '
   vertical_prompts:
-    - 11
-    - 12
-    - 13
+  - 6
+  - 7
+  - 8
+  - 9
+  - 11
+  horizontal_prompts:
+  - 82
+  - 19
+  - 23
+  - 32
+  - 69
 - id: 11
-  topic: Control Flow Tools
-  position: CONTROL FLOW - Chapter 4
-  question: What are control flow tools in Python?
-  answer: >
-    Control flow tools in Python include if statements, for loops, and while loops, which control the execution of code
-    blocks.
-
-    Example:
+  position: 3.1.2.6 String immutability
+  question: What does it mean that strings are immutable in Python?
+  answer: 'Strings in Python cannot be changed after they are created. Any operation
+    that modifies a string creates a new string:
 
     ```python
 
-    if x > 0:
-        print("Positive")
-    for i in range(3):
-        print(i)
+    s = ''Python''
+
+    s2 = s.replace(''P'', ''J'')
+
+    print(s2)  # Jython
+
+    print(s)   # Python
+
     ```
-  horizontal_prompts:
-    - 12
-    - 13
-    - 14
+
+    '
   vertical_prompts:
-    - 15
-    - 16
-    - 17
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  horizontal_prompts:
+  - 43
+  - 81
+  - 59
+  - 23
+  - 19
 - id: 12
-  topic: If Statements
-  position: CONTROL FLOW - Chapter 4.1
-  question: How do you use if statements in Python?
-  answer: |
-    If statements are used to execute code based on conditions.
-    Example:
+  position: 3.1.3.1 List creation
+  question: How are lists created in Python?
+  answer: 'Lists are created using square brackets and can contain elements of any
+    type:
+
     ```python
-    age = 18
-    if age >= 18:
-        print("Adult")
-    else:
-        print("Minor")
+
+    numbers = [1, 2, 3]
+
+    words = [''apple'', ''banana'']
+
     ```
-  horizontal_prompts:
-    - 11
-    - 13
-    - 14
+
+    '
   vertical_prompts:
-    - 15
-    - 16
-    - 17
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  horizontal_prompts:
+  - 23
+  - 69
+  - 81
+  - 19
+  - 59
 - id: 13
-  topic: For Loops
-  position: CONTROL FLOW - Chapter 4.2
-  question: How do you use for loops in Python?
-  answer: |
-    For loops are used to iterate over sequences like lists or strings.
-    Example:
+  position: 3.1.3.2 List indexing
+  question: How is list indexing performed in Python?
+  answer: 'List indexing allows access to individual elements using square brackets:
+
     ```python
-    for item in [1, 2, 3]:
-        print(item)
-    for char in "abc":
-        print(char)
+
+    numbers = [10, 20, 30]
+
+    print(numbers[0])  # 10
+
+    print(numbers[-1]) # 30
+
     ```
-  horizontal_prompts:
-    - 11
-    - 12
-    - 14
+
+    '
   vertical_prompts:
-    - 15
-    - 16
-    - 17
+  - 12
+  - 14
+  - 15
+  - 16
+  - 17
+  horizontal_prompts:
+  - 32
+  - 81
+  - 82
+  - 76
+  - 43
 - id: 14
-  topic: While Loops
-  position: CONTROL FLOW - Chapter 4.3
-  question: How do you use while loops in Python?
-  answer: |
-    While loops are used to execute code repeatedly until a condition is met.
-    Example:
-    ```python
-    while x < 10:
-        print(x)
-        x += 1
-    ```
-  horizontal_prompts:
-    - 11
-    - 12
-    - 13
-  vertical_prompts:
-    - 15
-    - 16
-    - 17
-- id: 15
-  topic: Function Definition and Usage
-  position: DATA STRUCTURES - Chapter 5
-  question: How do you define and use functions in Python?
-  answer: |
-    Functions are defined using the def keyword and are used to organize code into reusable blocks.
-    Example:
-    ```python
-    def greet(name):
-        return f"Hello, {name}!"
-    print(greet("Alice"))
-    ```
-  horizontal_prompts:
-    - 16
-    - 17
-    - 18
-  vertical_prompts:
-    - 19
-    - 20
-    - 21
-- id: 16
-  topic: Lambda Functions
-  position: DATA STRUCTURES - Chapter 5
-  question: How do you use lambda functions?
-  answer: |
-    Lambda functions are small, anonymous functions defined with the lambda keyword.
-    Example:
-    ```python
-    add = lambda x, y: x + y
-    print(add(5, 3))
-    ```
-  horizontal_prompts:
-    - 15
-    - 17
-    - 18
-  vertical_prompts:
-    - 19
-    - 20
-    - 21
-- id: 17
-  topic: Passing Arguments to Functions
-  position: DATA STRUCTURES - Chapter 5
-  question: How do you pass arguments to functions?
-  answer: |
-    Arguments can be passed to functions using positional or keyword arguments.
-    Example:
-    ```python
-    def add(x, y):
-        return x + y
-    print(add(5, 3))
-    print(add(x=5, y=3))
-    ```
-  horizontal_prompts:
-    - 15
-    - 16
-    - 18
-  vertical_prompts:
-    - 19
-    - 20
-    - 21
-- id: 18
-  topic: Returning Multiple Values from a Function
-  position: DATA STRUCTURES - Chapter 5
-  question: How do you return multiple values from a function?
-  answer: |
-    Functions can return multiple values.
-    Example:
-    ```python
-    def get_person_info(name, age):
-        return name, age
-    person = get_person_info("Alice", 25)
-    print(person)
-    ```
-  horizontal_prompts:
-    - 15
-    - 16
-    - 17
-  vertical_prompts:
-    - 19
-    - 20
-    - 21
-- id: 19
-  topic: Default Arguments
-  position: DATA STRUCTURES - Chapter 5
-  question: How do you use default arguments?
-  answer: |
-    Default arguments allow you to specify a default value for a parameter.
-    Example:
-    ```python
-    def greet(name="World"):
-        return f"Hello, {name}!"
-    print(greet())
-    print(greet("Alice"))
-    ```
-  horizontal_prompts:
-    - 15
-    - 18
-    - 19
-  vertical_prompts:
-    - 20
-    - 21
-    - 22
-- id: 20
-  topic: '*args and **kwargs'
-  position: DATA STRUCTURES - Chapter 5
-  question: How do you use *args and **kwargs?
-  answer: |
-    *args and **kwargs allow you to pass a variable number of arguments to a function.
-    Example:
-    ```python
-    def print_args(*args):
-        for arg in args:
-            print(arg)
-    print_args("Hello", 1, True)
+  position: 3.1.3.3 List slicing
+  question: How is list slicing used in Python?
+  answer: 'List slicing extracts a sublist using a range of indices:
 
-    def print_kwargs(**kwargs):
-        for key, value in kwargs.items():
-            print(f"{key}: {value}")
-    print_kwargs(name="Alice", age=25)
-    ```
-  horizontal_prompts:
-    - 15
-    - 19
-    - 20
-  vertical_prompts:
-    - 21
-    - 22
-    - 23
-- id: 21
-  topic: Recursive Functions
-  position: DATA STRUCTURES - Chapter 5
-  question: How do you write recursive functions?
-  answer: |
-    Recursive functions call themselves.
-    Example:
     ```python
-    def factorial(n):
-        if n == 0 or n == 1:
-            return 1
-        return n * factorial(n - 1)
-    print(factorial(5))
-    ```
-  horizontal_prompts:
-    - 15
-    - 19
-    - 20
-  vertical_prompts:
-    - 21
-    - 22
-    - 23
-- id: 22
-  topic: List Operations
-  position: MODULES & PACKAGES - Chapter 6
-  question: How do you work with lists in Python?
-  answer: |
-    Lists are ordered, mutable collections. You can add, remove, and access elements by index.
-    Example:
-    ```python
-    numbers = [1, 2, 3]
-    numbers.append(4)
-    print(numbers[0])
-    numbers.remove(2)
-    print(numbers)
-    ```
-  horizontal_prompts:
-    - 23
-    - 24
-    - 25
-  vertical_prompts:
-    - 26
-    - 27
-    - 28
-- id: 23
-  topic: List Comprehensions
-  position: MODULES & PACKAGES - Chapter 6
-  question: How do you use list comprehensions?
-  answer: |
-    List comprehensions provide a concise way to create lists.
-    Example:
-    ```python
-    squares = [x**2 for x in range(10)]
-    print(squares)
-    ```
-  horizontal_prompts:
-    - 22
-    - 24
-    - 25
-  vertical_prompts:
-    - 26
-    - 27
-    - 28
-- id: 24
-  topic: Sorting Lists
-  position: MODULES & PACKAGES - Chapter 6
-  question: How do you sort lists?
-  answer: |
-    Use the sort() method or sorted() function.
-    Example:
-    ```python
-    numbers = [5, 2, 8, 1, 3]
-    numbers.sort()
-    print(numbers)
-    sorted_numbers = sorted(numbers)
-    print(sorted_numbers)
-    ```
-  horizontal_prompts:
-    - 22
-    - 23
-    - 25
-  vertical_prompts:
-    - 26
-    - 27
-    - 28
-- id: 25
-  topic: Copying Lists
-  position: MODULES & PACKAGES - Chapter 6
-  question: How do you copy lists?
-  answer: |
-    Use the copy() method or list slicing.
-    Example:
-    ```python
-    original_list = [1, 2, 3]
-    copied_list = original_list.copy()
-    print(copied_list)
-    copied_list = original_list[:]
-    print(copied_list)
-    ```
-  horizontal_prompts:
-    - 22
-    - 23
-    - 24
-  vertical_prompts:
-    - 26
-    - 27
-    - 28
-- id: 26
-  topic: Accessing List Elements by Index
-  position: MODULES & PACKAGES - Chapter 6
-  question: How do you access list elements by index?
-  answer: |
-    Use square brackets with an index.
-    Example:
-    ```python
-    numbers = [1, 2, 3]
-    print(numbers[0]) # 1
-    print(numbers[1]) # 2
-    print(numbers[-1]) # 3 (last element)
-    ```
-  horizontal_prompts:
-    - 22
-    - 25
-    - 27
-  vertical_prompts:
-    - 28
-    - 29
-    - 30
-- id: 27
-  topic: Removing Elements from a List
-  position: MODULES & PACKAGES - Chapter 6
-  question: How do you remove elements from a list?
-  answer: |
-    Use the remove() method or del statement.
-    Example:
-    ```python
+
     numbers = [1, 2, 3, 4, 5]
-    numbers.remove(3)
-    print(numbers)
-    del numbers[0]
-    print(numbers)
+
+    print(numbers[1:4])  # [2, 3, 4]
+
+    print(numbers[:2])   # [1, 2]
+
     ```
-  horizontal_prompts:
-    - 22
-    - 26
-    - 28
+
+    '
   vertical_prompts:
-    - 29
-    - 30
-    - 31
+  - 12
+  - 13
+  - 15
+  - 16
+  - 17
+  horizontal_prompts:
+  - 76
+  - 81
+  - 23
+  - 69
+  - 59
+- id: 15
+  position: 3.1.3.4 List concatenation
+  question: How are lists concatenated in Python?
+  answer: 'Lists can be concatenated using the `+` operator:
+
+    ```python
+
+    a = [1, 2]
+
+    b = [3, 4]
+
+    c = a + b
+
+    print(c)  # [1, 2, 3, 4]
+
+    ```
+
+    '
+  vertical_prompts:
+  - 12
+  - 13
+  - 14
+  - 16
+  - 17
+  horizontal_prompts:
+  - 59
+  - 19
+  - 51
+  - 43
+  - 82
+- id: 16
+  position: 3.1.3.5 List modification
+  question: How are lists modified in Python?
+  answer: 'Lists can be modified by assigning new values to elements or using methods
+    like append and remove:
+
+    ```python
+
+    numbers = [1, 2, 3]
+
+    numbers[0] = 10
+
+    numbers.append(4)
+
+    numbers.remove(2)
+
+    print(numbers)
+
+    ```
+
+    '
+  vertical_prompts:
+  - 12
+  - 13
+  - 14
+  - 15
+  - 17
+  horizontal_prompts:
+  - 23
+  - 19
+  - 32
+  - 59
+  - 82
+- id: 17
+  position: 3.1.3.6 List nesting
+  question: How are nested lists used in Python?
+  answer: 'Nested lists are lists that contain other lists as elements:
+
+    ```python
+
+    matrix = [[1, 2], [3, 4]]
+
+    print(matrix[0][1])  # 2
+
+    ```
+
+    '
+  vertical_prompts:
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  horizontal_prompts:
+  - 32
+  - 81
+  - 69
+  - 51
+  - 43
+- id: 18
+  position: 3.1.3.7 List length
+  question: How is the length of a list determined in Python?
+  answer: 'The `len()` function returns the number of elements in a list:
+
+    ```python
+
+    numbers = [1, 2, 3, 4]
+
+    print(len(numbers))  # 4
+
+    ```
+
+    '
+  vertical_prompts:
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  horizontal_prompts:
+  - 19
+  - 82
+  - 81
+  - 69
+  - 32
+- id: 19
+  position: 4.1.1 Basic if syntax
+  question: How is a basic if statement written in Python?
+  answer: "A basic if statement checks a condition and executes code if the condition\
+    \ is true:\n```python\nx = 5\nif x > 0:\n    print('Positive')\n```\n"
+  vertical_prompts:
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  horizontal_prompts:
+  - 83
+  - 76
+  - 51
+  - 6
+  - 69
+- id: 20
+  position: 4.1.2 elif clause
+  question: How is the elif clause used in Python?
+  answer: "The elif clause allows checking multiple conditions in sequence:\n```python\n\
+    x = 0\nif x > 0:\n    print('Positive')\nelif x == 0:\n    print('Zero')\n```\n"
+  vertical_prompts:
+  - 19
+  - 21
+  - 22
+  - 23
+  - 24
+  horizontal_prompts:
+  - 1
+  - 83
+  - 43
+  - 69
+  - 6
+- id: 21
+  position: 4.1.3 else clause
+  question: How is the else clause used in Python if statements?
+  answer: "The else clause provides code to execute if none of the if or elif conditions\
+    \ are true:\n```python\nx = -1\nif x > 0:\n    print('Positive')\nelse:\n    print('Not\
+    \ positive')\n```\n"
+  vertical_prompts:
+  - 19
+  - 20
+  - 22
+  - 23
+  - 24
+  horizontal_prompts:
+  - 6
+  - 69
+  - 59
+  - 1
+  - 82
+- id: 22
+  position: 4.1.4 Comparison operators
+  question: What are comparison operators in Python and how are they used?
+  answer: 'Comparison operators are used to compare values. They include `==`, `!=`,
+    `<`, `>`, `<=`, and `>=`:
+
+    ```python
+
+    print(5 == 5)   # True
+
+    print(3 != 4)   # True
+
+    print(2 < 5)    # True
+
+    ```
+
+    '
+  vertical_prompts:
+  - 19
+  - 20
+  - 21
+  - 23
+  - 24
+  horizontal_prompts:
+  - 43
+  - 59
+  - 69
+  - 81
+  - 6
+- id: 23
+  position: 4.2.1 Basic for loop syntax
+  question: How is a basic for loop written in Python?
+  answer: "A basic for loop iterates over a sequence of items:\n```python\nfor item\
+    \ in [1, 2, 3]:\n    print(item)\n```\n"
+  vertical_prompts:
+  - 24
+  - 25
+  - 26
+  - 19
+  - 20
+  horizontal_prompts:
+  - 1
+  - 69
+  - 76
+  - 19
+  - 6
+- id: 24
+  position: 4.2.2 Iterating over sequences
+  question: How do you iterate over sequences in Python?
+  answer: "You can iterate over sequences like lists, tuples, and strings using a\
+    \ for loop:\n```python\nfor char in 'abc':\n    print(char)\nfor num in (1, 2,\
+    \ 3):\n    print(num)\n```\n"
+  vertical_prompts:
+  - 23
+  - 25
+  - 26
+  - 19
+  - 20
+  horizontal_prompts:
+  - 76
+  - 1
+  - 82
+  - 19
+  - 6
+- id: 25
+  position: 4.2.3 Loop variables
+  question: What are loop variables in Python for loops?
+  answer: "Loop variables take the value of each item in the sequence during iteration:\n\
+    ```python\nfor fruit in ['apple', 'banana']:\n    print(fruit)\n```\n"
+  vertical_prompts:
+  - 23
+  - 24
+  - 26
+  - 19
+  - 20
+  horizontal_prompts:
+  - 82
+  - 19
+  - 59
+  - 6
+  - 76
+- id: 26
+  position: 4.2.4 Nested loops
+  question: How are nested loops used in Python?
+  answer: "Nested loops are loops inside other loops, useful for working with multi-dimensional\
+    \ data:\n```python\nfor i in range(2):\n    for j in range(2):\n        print(i,\
+    \ j)\n```\n"
+  vertical_prompts:
+  - 23
+  - 24
+  - 25
+  - 19
+  - 20
+  horizontal_prompts:
+  - 82
+  - 19
+  - 6
+  - 69
+  - 51
+- id: 27
+  position: 4.3.1 range with one argument
+  question: How is the range function used with one argument in Python?
+  answer: "The range function with one argument generates numbers from 0 up to (but\
+    \ not including) that number:\n```python\nfor i in range(3):\n    print(i)  #\
+    \ 0, 1, 2\n```\n"
+  vertical_prompts:
+  - 28
+  - 29
+  - 23
+  - 24
+  - 25
+  horizontal_prompts:
+  - 6
+  - 43
+  - 19
+  - 1
+  - 69
 - id: 28
-  topic: Iterating Over a List
-  position: MODULES & PACKAGES - Chapter 6
-  question: How do you iterate over a list?
-  answer: |
-    Use a for loop or while loop.
-    Example:
-    ```python
-    for item in [1, 2, 3]:
-        print(item)
-    i = 0
-    while i < len([1, 2, 3]):
-        print([1, 2, 3][i])
-        i += 1
-    ```
-  horizontal_prompts:
-    - 22
-    - 27
-    - 29
+  position: 4.3.2 range with start and stop
+  question: How is the range function used with start and stop arguments in Python?
+  answer: "The range function with start and stop arguments generates numbers from\
+    \ start up to (but not including) stop:\n```python\nfor i in range(1, 4):\n  \
+    \  print(i)  # 1, 2, 3\n```\n"
   vertical_prompts:
-    - 30
-    - 31
-    - 32
+  - 27
+  - 29
+  - 23
+  - 24
+  - 25
+  horizontal_prompts:
+  - 59
+  - 43
+  - 82
+  - 19
+  - 76
 - id: 29
-  topic: Dictionary Usage
-  position: I/O & FILE HANDLING - Chapter 7
-  question: How do you use dictionaries in Python?
-  answer: |
-    Dictionaries are collections of key-value pairs. You can add, access, and remove items by key.
-    Example:
-    ```python
-    person = {"name": "Alice", "age": 25}
-    print(person["name"])
-    person["age"] = 26
-    del person["name"]
-    print(person)
-    ```
-  horizontal_prompts:
-    - 30
-    - 31
-    - 32
+  position: 4.3.3 range with step
+  question: How is the range function used with a step argument in Python?
+  answer: "The range function with a step argument generates numbers, incrementing\
+    \ by the step value:\n```python\nfor i in range(0, 6, 2):\n    print(i)  # 0,\
+    \ 2, 4\n```\n"
   vertical_prompts:
-    - 33
-    - 34
-    - 35
+  - 27
+  - 28
+  - 23
+  - 24
+  - 25
+  horizontal_prompts:
+  - 43
+  - 69
+  - 6
+  - 82
+  - 76
 - id: 30
-  topic: Tuples and Sets
-  position: I/O & FILE HANDLING - Chapter 7
-  question: What are tuples and sets in Python?
-  answer: |
-    Tuples are immutable sequences, and sets are unordered collections of unique elements.
-    Example:
-    ```python
-    t = (1, 2, 3)
-    s = {1, 2, 3}
-    print(t[0])
-    s.add(4)
-    print(s)
-    ```
-  horizontal_prompts:
-    - 29
-    - 31
-    - 32
+  position: 4.4.1 break statement usage
+  question: How is the break statement used in Python loops?
+  answer: "The break statement exits the nearest enclosing loop immediately:\n```python\n\
+    for i in range(5):\n    if i == 3:\n        break\n    print(i)\n```\n"
   vertical_prompts:
-    - 33
-    - 34
-    - 35
+  - 31
+  - 23
+  - 24
+  - 25
+  - 26
+  horizontal_prompts:
+  - 51
+  - 43
+  - 76
+  - 6
+  - 59
 - id: 31
-  topic: Error and Exception Handling
-  position: ERROR HANDLING - Chapter 8
-  question: How do you handle errors and exceptions in Python?
-  answer: |
-    Errors and exceptions are handled using try, except, and finally blocks.
-    Example:
-    ```python
-    try:
-        x = 1 / 0
-    except ZeroDivisionError:
-        print("Cannot divide by zero.")
-    finally:
-        print("Done.")
-    ```
-  horizontal_prompts:
-    - 32
-    - 33
-    - 34
+  position: 4.4.2 continue statement usage
+  question: How is the continue statement used in Python loops?
+  answer: "The continue statement skips the rest of the current loop iteration and\
+    \ moves to the next iteration:\n```python\nfor i in range(5):\n    if i == 2:\n\
+    \        continue\n    print(i)\n# Output: 0, 1, 3, 4\n```\n"
   vertical_prompts:
-    - 36
-    - 37
-    - 38
+  - 30
+  - 23
+  - 24
+  - 25
+  - 26
+  horizontal_prompts:
+  - 76
+  - 43
+  - 51
+  - 19
+  - 6
 - id: 32
-  topic: Common Exception Types
-  position: ERROR HANDLING - Chapter 8
-  question: What are common exception types in Python?
-  answer: |
-    Common exception types include NameError, TypeError, ValueError, ZeroDivisionError, FileNotFoundError, etc.
-    Example:
-    ```python
-    try:
-        print(x) # NameError
-    except NameError:
-        print("Variable 'x' not defined.")
-    try:
-        print(1 + "2") # TypeError
-    except TypeError:
-        print("Cannot add int and str.")
-    try:
-        int("abc") # ValueError
-    except ValueError:
-        print("Invalid literal for int().")
-    ```
-  horizontal_prompts:
-    - 31
-    - 33
-    - 34
+  position: 4.8.1 Function definition syntax
+  question: How do you define a function in Python?
+  answer: "Functions are defined using the `def` keyword, followed by the function\
+    \ name and parentheses:\n```python\ndef greet():\n    print('Hello')\n```\n"
   vertical_prompts:
-    - 36
-    - 37
-    - 38
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  horizontal_prompts:
+  - 19
+  - 59
+  - 51
+  - 81
+  - 76
 - id: 33
-  topic: Raising Exceptions
-  position: ERROR HANDLING - Chapter 8
-  question: How do you raise exceptions?
-  answer: |
-    Use the raise keyword.
-    Example:
-    ```python
-    def check_age(age):
-        if age < 0:
-            raise ValueError("Age cannot be negative.")
-        if age < 18:
-            raise ValueError("You must be at least 18 years old.")
-    try:
-        check_age(-5)
-    except ValueError as e:
-        print(e)
-    ```
-  horizontal_prompts:
-    - 31
-    - 32
-    - 34
+  position: 4.8.2 Parameters
+  question: What are parameters in Python functions?
+  answer: "Parameters are variables listed inside the parentheses in the function\
+    \ definition:\n```python\ndef add(a, b):\n    return a + b\n```\n"
   vertical_prompts:
-    - 36
-    - 37
-    - 38
+  - 32
+  - 34
+  - 35
+  - 36
+  - 37
+  horizontal_prompts:
+  - 6
+  - 81
+  - 19
+  - 1
+  - 43
 - id: 34
-  topic: Creating Custom Exceptions
-  position: ERROR HANDLING - Chapter 8
-  question: How do you create custom exceptions?
-  answer: |
-    Custom exceptions are derived from Exception or BaseException.
-    Example:
-    ```python
-    class CustomError(Exception):
-        pass
-    try:
-        raise CustomError("This is a custom error.")
-    except CustomError as e:
-        print(e)
-    ```
-  horizontal_prompts:
-    - 31
-    - 32
-    - 33
+  position: 4.8.3 Return statement
+  question: How is the return statement used in Python functions?
+  answer: "The `return` statement ends a function and optionally sends a value back\
+    \ to the caller:\n```python\ndef square(x):\n    return x * x\n```\n"
   vertical_prompts:
-    - 36
-    - 37
-    - 38
+  - 32
+  - 33
+  - 35
+  - 36
+  - 37
+  horizontal_prompts:
+  - 82
+  - 6
+  - 81
+  - 69
+  - 59
 - id: 35
-  topic: Multiple Except Blocks
-  position: ERROR HANDLING - Chapter 8
-  question: How do you use multiple except blocks?
-  answer: |
-    You can have multiple except blocks to handle different types of exceptions.
-    Example:
+  position: 4.8.4 Function calls
+  question: How do you call a function in Python?
+  answer: 'Functions are called by using their name followed by parentheses:
+
     ```python
-    try:
-        x = 1 / 0
-    except ZeroDivisionError:
-        print("Cannot divide by zero.")
-    except TypeError:
-        print("Operation not supported.")
+
+    greet()
+
+    result = add(2, 3)
+
     ```
-  horizontal_prompts:
-    - 31
-    - 34
-    - 36
+
+    '
   vertical_prompts:
-    - 37
-    - 38
-    - 39
+  - 32
+  - 33
+  - 34
+  - 36
+  - 37
+  horizontal_prompts:
+  - 1
+  - 51
+  - 69
+  - 6
+  - 82
 - id: 36
-  topic: Else with Try-Except
-  position: ERROR HANDLING - Chapter 8
-  question: How do you use else with try-except?
-  answer: |
-    The else block is executed if no exception occurs.
-    Example:
-    ```python
-    try:
-        x = 1 / 2
-    except ZeroDivisionError:
-        print("Cannot divide by zero.")
-    else:
-        print("Division successful.")
-    ```
-  horizontal_prompts:
-    - 31
-    - 35
-    - 37
+  position: 4.8.5 Scope rules
+  question: What are scope rules in Python functions?
+  answer: "Scope rules determine where variables can be accessed. Variables defined\
+    \ inside a function are local to that function:\n```python\ndef foo():\n    x\
+    \ = 10  # local variable\nprint(x)  # Error: x is not defined\n```\n"
   vertical_prompts:
-    - 38
-    - 39
-    - 40
+  - 32
+  - 33
+  - 34
+  - 35
+  - 37
+  horizontal_prompts:
+  - 82
+  - 59
+  - 81
+  - 1
+  - 51
 - id: 37
-  topic: Handling Exceptions in Functions
-  position: ERROR HANDLING - Chapter 8
-  question: How do you handle exceptions in functions?
-  answer: |
-    Exceptions can be handled within functions.
-    Example:
-    ```python
-    def divide(a, b):
-        try:
-            return a / b
-        except ZeroDivisionError:
-            return "Cannot divide by zero."
-    print(divide(10, 2))
-    print(divide(10, 0))
-    ```
-  horizontal_prompts:
-    - 31
-    - 36
-    - 38
+  position: 4.9.1.1 Setting default values
+  question: How do you set default argument values in Python functions?
+  answer: "Default argument values are set by assigning a value in the function definition:\n\
+    ```python\ndef greet(name='World'):\n    print('Hello,', name)\ngreet()      \
+    \  # Hello, World\ngreet('Alice') # Hello, Alice\n```\n"
   vertical_prompts:
-    - 39
-    - 40
-    - 41
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  horizontal_prompts:
+  - 69
+  - 6
+  - 82
+  - 81
+  - 76
 - id: 38
-  topic: Classes and Object-Oriented Programming
-  position: OBJECT-ORIENTED PROGRAMMING - Chapter 9
-  question: How do you use classes and OOP in Python?
-  answer: |
-    Classes are blueprints for creating objects. OOP allows you to model real-world entities.
-    Example:
-    ```python
-    class Dog:
-        def __init__(self, name):
-            self.name = name
-        def bark(self):
-            print(f"{self.name} barks!")
-    d = Dog("Buddy")
-    d.bark()
-    ```
-  horizontal_prompts:
-    - 39
-    - 40
-    - 41
+  position: 4.9.1.2 Optional arguments
+  question: What are optional arguments in Python functions?
+  answer: "Optional arguments are those with default values, allowing the function\
+    \ to be called with fewer arguments:\n```python\ndef power(base, exponent=2):\n\
+    \    return base ** exponent\nprint(power(3))    # 9\nprint(power(3, 3)) # 27\n\
+    ```\n"
   vertical_prompts:
-    - 42
-    - 43
-    - 44
+  - 37
+  - 39
+  - 40
+  - 41
+  - 42
+  horizontal_prompts:
+  - 76
+  - 69
+  - 51
+  - 1
+  - 19
 - id: 39
-  topic: Inheritance
-  position: OBJECT-ORIENTED PROGRAMMING - Chapter 9
-  question: What is inheritance in Python?
-  answer: |
-    Inheritance allows a class to inherit attributes and methods from another class.
-    Example:
-    ```python
-    class Animal:
-        def __init__(self, name):
-            self.name = name
-        def speak(self):
-            pass
-    class Dog(Animal):
-        def bark(self):
-            print(f"{self.name} barks!")
-    d = Dog("Buddy")
-    d.speak()
-    d.bark()
-    ```
-  horizontal_prompts:
-    - 38
-    - 40
-    - 41
+  position: 4.9.1.3 Mutable default values warning
+  question: Why should you avoid using mutable default values in Python functions?
+  answer: "Mutable default values like lists or dictionaries can lead to unexpected\
+    \ behavior because the same object is used across calls:\n```python\ndef add_item(item,\
+    \ items=[]):\n    items.append(item)\n    return items\nprint(add_item(1)) # [1]\n\
+    print(add_item(2)) # [1, 2] (unexpected)\n```\n"
   vertical_prompts:
-    - 42
-    - 43
-    - 44
+  - 37
+  - 38
+  - 40
+  - 41
+  - 42
+  horizontal_prompts:
+  - 43
+  - 19
+  - 76
+  - 51
+  - 1
 - id: 40
-  topic: Class Methods and Static Methods
-  position: OBJECT-ORIENTED PROGRAMMING - Chapter 9
-  question: How do you use class methods and static methods?
-  answer: |
-    Class methods are bound to the class and can access class attributes. Static methods are not bound to the class.
-    Example:
-    ```python
-    class Math:
-        @classmethod
-        def add(cls, a, b):
-            return a + b
-        @staticmethod
-        def multiply(a, b):
-            return a * b
-    print(Math.add(5, 3))
-    print(Math.multiply(5, 3))
-    ```
-  horizontal_prompts:
-    - 38
-    - 39
-    - 41
+  position: 4.9.2.1 Named arguments
+  question: What are named (keyword) arguments in Python function calls?
+  answer: "Named arguments are specified by name in the function call, improving clarity:\n\
+    ```python\ndef greet(name, message):\n    print(message, name)\ngreet(name='Alice',\
+    \ message='Hi')\n```\n"
   vertical_prompts:
-    - 42
-    - 43
-    - 44
+  - 37
+  - 38
+  - 39
+  - 41
+  - 42
+  horizontal_prompts:
+  - 81
+  - 1
+  - 69
+  - 59
+  - 19
 - id: 41
-  topic: Properties in Classes
-  position: OBJECT-ORIENTED PROGRAMMING - Chapter 9
-  question: How do you use properties in classes?
-  answer: |
-    Properties are used to make attributes read-only or perform actions when accessed.
-    Example:
-    ```python
-    class Person:
-        def __init__(self, name):
-            self._name = name # Use _name for internal use
-        @property
-        def name(self):
-            return self._name.title()
-        @name.setter
-        def name(self, value):
-            self._name = value.lower()
-    p = Person("alice")
-    print(p.name)
-    p.name = "BOB"
-    print(p.name)
-    ```
-  horizontal_prompts:
-    - 38
-    - 39
-    - 40
+  position: 4.9.2.2 Argument order
+  question: What is the rule for argument order when mixing positional and keyword
+    arguments in Python?
+  answer: "Positional arguments must come before keyword arguments in a function call:\n\
+    ```python\ndef func(a, b, c):\n    pass\nfunc(1, c=3, b=2) # Error: b after c\n\
+    func(1, 2, c=3)   # Correct\n```\n"
   vertical_prompts:
-    - 42
-    - 43
-    - 44
+  - 37
+  - 38
+  - 39
+  - 40
+  - 42
+  horizontal_prompts:
+  - 51
+  - 69
+  - 43
+  - 19
+  - 6
 - id: 42
-  topic: Defining Instance Variables
-  position: OBJECT-ORIENTED PROGRAMMING - Chapter 9
-  question: How do you define instance variables?
-  answer: |
-    Instance variables are defined within the __init__ method.
-    Example:
-    ```python
-    class Dog:
-        def __init__(self, name):
-            self.name = name
-    d1 = Dog("Buddy")
-    d2 = Dog("Max")
-    print(d1.name)
-    print(d2.name)
-    ```
-  horizontal_prompts:
-    - 38
-    - 41
-    - 43
+  position: 4.9.2.3 Mixing positional and keyword arguments
+  question: How do you mix positional and keyword arguments in Python function calls?
+  answer: "You can use both positional and keyword arguments, but positional arguments\
+    \ must come first:\n```python\ndef describe(name, age, city):\n    print(name,\
+    \ age, city)\ndescribe('Alice', age=30, city='Beijing')\n```\n"
   vertical_prompts:
-    - 44
-    - 45
-    - 46
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  horizontal_prompts:
+  - 43
+  - 19
+  - 82
+  - 51
+  - 59
 - id: 43
-  topic: Creating Multiple Objects
-  position: OBJECT-ORIENTED PROGRAMMING - Chapter 9
-  question: How do you create multiple objects?
-  answer: |
-    You can create multiple objects by calling the class constructor.
-    Example:
+  position: 5.1.1.1 append() method
+  question: How is the append() method used with lists in Python?
+  answer: 'The append() method adds a single element to the end of a list:
+
     ```python
-    class Dog:
-        def __init__(self, name):
-            self.name = name
-    d1 = Dog("Buddy")
-    d2 = Dog("Max")
-    print(d1.name)
-    print(d2.name)
+
+    numbers = [1, 2, 3]
+
+    numbers.append(4)
+
+    print(numbers)  # [1, 2, 3, 4]
+
     ```
-  horizontal_prompts:
-    - 38
-    - 42
-    - 44
+
+    '
   vertical_prompts:
-    - 45
-    - 46
-    - 47
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  horizontal_prompts:
+  - 19
+  - 83
+  - 1
+  - 69
+  - 32
 - id: 44
-  topic: Overriding Methods
-  position: OBJECT-ORIENTED PROGRAMMING - Chapter 9
-  question: How do you override methods?
-  answer: |
-    You can override methods in a child class.
-    Example:
+  position: 5.1.1.2 pop() method
+  question: How is the pop() method used with lists in Python?
+  answer: 'The pop() method removes and returns the last element of a list:
+
     ```python
-    class Animal:
-        def speak(self):
-            print("Animal speaks")
-    class Dog(Animal):
-        def speak(self):
-            print(f"{self.name} barks!")
-    d = Dog("Buddy")
-    d.speak()
+
+    numbers = [1, 2, 3]
+
+    item = numbers.pop()
+
+    print(item)     # 3
+
+    print(numbers)  # [1, 2]
+
     ```
-  horizontal_prompts:
-    - 38
-    - 43
-    - 45
+
+    '
   vertical_prompts:
-    - 46
-    - 47
-    - 48
+  - 43
+  - 45
+  - 46
+  - 47
+  - 48
+  horizontal_prompts:
+  - 6
+  - 76
+  - 82
+  - 81
+  - 1
 - id: 45
-  topic: Virtual Environments and Package Management
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11)
-  question: How do you manage virtual environments and packages in Python?
-  answer: |
-    Virtual environments isolate project dependencies. Use pip to install packages.
-    Example:
+  position: 5.1.1.3 LIFO principle
+  question: What is the LIFO principle in the context of Python lists?
+  answer: 'LIFO stands for Last-In, First-Out. Lists can be used as stacks, where
+    the last element added is the first to be removed:
+
     ```python
-    # Create a virtual environment
-    python -m venv venv
-    # Activate (Windows)
-    venv\Scripts\activate
-    # Activate (Unix)
-    source venv/bin/activate
-    # Install a package
-    pip install requests
+
+    stack = []
+
+    stack.append(''a'')
+
+    stack.append(''b'')
+
+    print(stack.pop())  # b
+
     ```
-  horizontal_prompts:
-    - 46
-    - 47
-    - 48
+
+    '
   vertical_prompts:
-    - 49
-    - 50
-    - 51
+  - 43
+  - 44
+  - 46
+  - 47
+  - 48
+  horizontal_prompts:
+  - 1
+  - 6
+  - 81
+  - 69
+  - 76
 - id: 46
-  topic: Listing Installed Packages
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).1
-  question: How do you list installed packages?
-  answer: |
-    Use pip list.
-    Example:
+  position: 5.1.2.1 append() and pop(0)
+  question: How are append() and pop(0) used to implement a queue in Python?
+  answer: 'You can use append() to add to the end and pop(0) to remove from the front,
+    simulating a queue:
+
     ```python
-    pip list
+
+    queue = []
+
+    queue.append(''a'')
+
+    queue.append(''b'')
+
+    print(queue.pop(0))  # a
+
     ```
-  horizontal_prompts:
-    - 45
-    - 47
-    - 48
+
+    '
   vertical_prompts:
-    - 49
-    - 50
-    - 51
+  - 43
+  - 44
+  - 45
+  - 47
+  - 48
+  horizontal_prompts:
+  - 51
+  - 83
+  - 32
+  - 1
+  - 19
 - id: 47
-  topic: Uninstalling Packages
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).2
-  question: How do you uninstall a package?
-  answer: |
-    Use pip uninstall.
-    Example:
+  position: 5.1.2.2 collections.deque
+  question: What is collections.deque and how is it used as a queue in Python?
+  answer: 'collections.deque provides an efficient queue implementation:
+
     ```python
-    pip uninstall requests
+
+    from collections import deque
+
+    queue = deque([''a'', ''b''])
+
+    queue.append(''c'')
+
+    print(queue.popleft())  # a
+
     ```
-  horizontal_prompts:
-    - 45
-    - 46
-    - 48
+
+    '
   vertical_prompts:
-    - 49
-    - 50
-    - 51
+  - 43
+  - 44
+  - 45
+  - 46
+  - 48
+  horizontal_prompts:
+  - 69
+  - 1
+  - 6
+  - 83
+  - 51
 - id: 48
-  topic: Upgrading Packages
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).3
-  question: How do you upgrade packages?
-  answer: |
-    Use pip install --upgrade.
-    Example:
+  position: 5.1.2.3 FIFO principle
+  question: What is the FIFO principle in the context of Python lists or queues?
+  answer: 'FIFO stands for First-In, First-Out. Queues remove the first element added:
+
     ```python
-    pip install --upgrade requests
+
+    queue = []
+
+    queue.append(''a'')
+
+    queue.append(''b'')
+
+    print(queue.pop(0))  # a
+
     ```
-  horizontal_prompts:
-    - 45
-    - 46
-    - 47
+
+    '
   vertical_prompts:
-    - 49
-    - 50
-    - 51
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  horizontal_prompts:
+  - 83
+  - 76
+  - 69
+  - 51
+  - 82
 - id: 49
-  topic: Freezing Requirements
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).4
-  question: How do you freeze requirements?
-  answer: |
-    Use pip freeze.
-    Example:
+  position: 5.2.1 Deleting list elements
+  question: How do you delete elements from a list in Python?
+  answer: 'You can delete elements from a list using the del statement or the remove()
+    method:
+
     ```python
-    pip freeze > requirements.txt
+
+    numbers = [1, 2, 3]
+
+    del numbers[1]
+
+    print(numbers)  # [1, 3]
+
     ```
-  horizontal_prompts:
-    - 45
-    - 48
-    - 50
+
+    '
   vertical_prompts:
-    - 51
-    - 52
-    - 53
+  - 50
+  - 43
+  - 44
+  - 45
+  - 46
+  horizontal_prompts:
+  - 6
+  - 19
+  - 81
+  - 32
+  - 1
 - id: 50
-  topic: Using Requirements.txt
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).5
-  question: How do you use requirements.txt?
-  answer: |
-    requirements.txt is used to specify project dependencies.
-    Example:
+  position: 5.2.2 Deleting variables
+  question: How do you delete variables in Python?
+  answer: 'The del statement can be used to delete variables entirely:
+
     ```python
-    requests
+
+    x = 10
+
+    del x
+
+    # x is now undefined
+
     ```
-  horizontal_prompts:
-    - 45
-    - 49
-    - 51
+
+    '
   vertical_prompts:
-    - 52
-    - 53
-    - 54
+  - 49
+  - 43
+  - 44
+  - 45
+  - 46
+  horizontal_prompts:
+  - 82
+  - 51
+  - 69
+  - 76
+  - 6
 - id: 51
-  topic: Deactivating a Virtual Environment
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).6
-  question: How do you deactivate a virtual environment?
-  answer: |
-    Use deactivate.
-    Example:
+  position: 5.3.1 Tuple creation
+  question: How do you create a tuple in Python?
+  answer: 'Tuples are created by placing values inside parentheses, separated by commas:
+
     ```python
-    deactivate
+
+    t = (1, 2, 3)
+
+    print(t)
+
     ```
-  horizontal_prompts:
-    - 45
-    - 48
-    - 50
+
+    '
   vertical_prompts:
-    - 52
-    - 53
-    - 54
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  horizontal_prompts:
+  - 69
+  - 83
+  - 32
+  - 6
+  - 76
 - id: 52
-  topic: Input and Output
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11)
-  question: How do you handle input and output in Python?
-  answer: |
-    Use input() for user input and print() for output. For files, use open(), read(), and write().
-    Example:
+  position: 5.3.2 Tuple packing
+  question: What is tuple packing in Python?
+  answer: 'Tuple packing means assigning multiple values to a single tuple variable:
+
     ```python
-    name = input("Enter your name: ")
-    print(f"Hello, {name}!")
-    with open("file.txt", "w") as f:
-        f.write("Hello, file!")
+
+    t = 1, 2, 3
+
+    print(t)  # (1, 2, 3)
+
     ```
-  horizontal_prompts:
-    - 53
-    - 54
-    - 55
+
+    '
   vertical_prompts:
-    - 56
-    - 57
-    - 58
+  - 51
+  - 53
+  - 54
+  - 55
+  - 56
+  horizontal_prompts:
+  - 76
+  - 1
+  - 6
+  - 81
+  - 43
 - id: 53
-  topic: Reading from a File
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).1
-  question: How do you read from a file?
-  answer: |
-    Use open() with 'r' mode.
-    Example:
+  position: 5.3.3 Tuple unpacking
+  question: What is tuple unpacking in Python?
+  answer: 'Tuple unpacking assigns the elements of a tuple to multiple variables:
+
     ```python
-    with open("file.txt", "r") as f:
-        content = f.read()
-    print(content)
+
+    t = (1, 2, 3)
+
+    a, b, c = t
+
+    print(a, b, c)  # 1 2 3
+
     ```
-  horizontal_prompts:
-    - 52
-    - 54
-    - 55
+
+    '
   vertical_prompts:
-    - 56
-    - 57
-    - 58
+  - 51
+  - 52
+  - 54
+  - 55
+  - 56
+  horizontal_prompts:
+  - 6
+  - 32
+  - 76
+  - 81
+  - 82
 - id: 54
-  topic: Writing to a File
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).2
-  question: How do you write to a file?
-  answer: |
-    Use open() with 'w' mode.
-    Example:
+  position: 5.3.4 Tuple immutability
+  question: What does it mean that tuples are immutable in Python?
+  answer: 'Tuples cannot be changed after creation. Any attempt to modify a tuple
+    will result in an error:
+
     ```python
-    with open("file.txt", "w") as f:
-        f.write("Hello, file!")
+
+    t = (1, 2, 3)
+
+    # t[0] = 10  # Error
+
     ```
-  horizontal_prompts:
-    - 52
-    - 53
-    - 55
+
+    '
   vertical_prompts:
-    - 56
-    - 57
-    - 58
+  - 51
+  - 52
+  - 53
+  - 55
+  - 56
+  horizontal_prompts:
+  - 19
+  - 69
+  - 81
+  - 83
+  - 1
 - id: 55
-  topic: Handling File Exceptions
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).3
-  question: How do you handle file exceptions?
-  answer: |
-    Use try-except blocks.
-    Example:
+  position: 5.4.1 Set creation
+  question: How do you create a set in Python?
+  answer: 'Sets are created using curly braces or the set() function:
+
     ```python
-    try:
-        with open("non_existent_file.txt", "r") as f:
-            content = f.read()
-    except FileNotFoundError:
-        print("File not found.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+
+    s = {1, 2, 3}
+
+    t = set([4, 5, 6])
+
     ```
-  horizontal_prompts:
-    - 52
-    - 53
-    - 54
+
+    '
   vertical_prompts:
-    - 56
-    - 57
-    - 58
+  - 56
+  - 57
+  - 58
+  - 51
+  - 52
+  horizontal_prompts:
+  - 43
+  - 1
+  - 69
+  - 32
+  - 51
 - id: 56
-  topic: Appending to a File
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).4
-  question: How do you append to a file?
-  answer: |
-    Use open() with 'a' mode.
-    Example:
+  position: 5.4.2 Set operations
+  question: What are common set operations in Python?
+  answer: 'Sets support operations like union, intersection, and difference:
+
     ```python
-    with open("file.txt", "a") as f:
-        f.write("\nHello, again!")
+
+    a = {1, 2, 3}
+
+    b = {2, 3, 4}
+
+    print(a | b)  # union: {1, 2, 3, 4}
+
+    print(a & b)  # intersection: {2, 3}
+
+    print(a - b)  # difference: {1}
+
     ```
-  horizontal_prompts:
-    - 52
-    - 55
-    - 57
+
+    '
   vertical_prompts:
-    - 58
-    - 59
-    - 60
+  - 55
+  - 57
+  - 58
+  - 51
+  - 52
+  horizontal_prompts:
+  - 83
+  - 19
+  - 76
+  - 51
+  - 6
 - id: 57
-  topic: Reading a File Line by Line
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).5
-  question: How do you read a file line by line?
-  answer: |
-    Use a while loop with readline().
-    Example:
+  position: 5.4.3 Set comprehensions
+  question: What is a set comprehension in Python?
+  answer: 'Set comprehensions create sets using a concise syntax:
+
     ```python
-    with open("file.txt", "r") as f:
-        while True:
-            line = f.readline()
-            if not line:
-                break
-            print(line.strip())
+
+    squares = {x * x for x in range(5)}
+
+    print(squares)  # {0, 1, 4, 9, 16}
+
     ```
-  horizontal_prompts:
-    - 52
-    - 55
-    - 56
+
+    '
   vertical_prompts:
-    - 58
-    - 59
-    - 60
+  - 55
+  - 56
+  - 58
+  - 51
+  - 52
+  horizontal_prompts:
+  - 1
+  - 83
+  - 32
+  - 81
+  - 76
 - id: 58
-  topic: Checking if a File Exists
-  position: STANDARD LIBRARY FEATURES (Chapter 10-11).6
-  question: How do you check if a file exists?
-  answer: |
-    Use os.path.exists().
-    Example:
+  position: 5.4.4 Set methods
+  question: What are some useful set methods in Python?
+  answer: 'Sets have methods like add(), remove(), and clear():
+
     ```python
-    import os
-    if os.path.exists("file.txt"):
-        print("File exists.")
-    else:
-        print("File does not exist.")
+
+    s = {1, 2}
+
+    s.add(3)
+
+    s.remove(1)
+
+    s.clear()
+
     ```
-  horizontal_prompts:
-    - 52
-    - 56
-    - 57
+
+    '
   vertical_prompts:
-    - 59
-    - 60
-    - 61
+  - 55
+  - 56
+  - 57
+  - 51
+  - 52
+  horizontal_prompts:
+  - 81
+  - 76
+  - 19
+  - 1
+  - 43
 - id: 59
-  topic: Standard Library Overview
-  position: DEVELOPMENT ENVIRONMENT - Chapter 12
-  question: What is the Python standard library?
-  answer: >
-    The Python standard library is a collection of modules and packages included with Python, providing tools for
-    various tasks.
-
-    Example:
+  position: 5.5.1 Dictionary creation
+  question: How do you create a dictionary in Python?
+  answer: 'Dictionaries are created using curly braces with key-value pairs:
 
     ```python
 
-    import math
-
-    print(math.sqrt(16))
-
-    import datetime
-
-    print(datetime.datetime.now())
+    d = {''a'': 1, ''b'': 2}
 
     ```
-  horizontal_prompts:
-    - 60
-    - 61
-    - 62
+
+    '
   vertical_prompts:
-    - 63
-    - 64
-    - 65
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  horizontal_prompts:
+  - 81
+  - 82
+  - 76
+  - 6
+  - 32
 - id: 60
-  topic: Some Useful Modules
-  position: DEVELOPMENT ENVIRONMENT - Chapter 12
-  question: What are some useful modules in the standard library?
-  answer: |
-    Some useful modules include math, datetime, os, random, and sys.
-    Example:
+  position: 5.5.2 Key-value pairs
+  question: What are key-value pairs in Python dictionaries?
+  answer: 'Key-value pairs associate a key with a value in a dictionary:
+
     ```python
-    import math
-    print(math.sqrt(16))
-    import datetime
-    print(datetime.datetime.now())
+
+    d = {''x'': 10, ''y'': 20}
+
+    print(d[''x''])  # 10
+
     ```
-  horizontal_prompts:
-    - 59
-    - 61
-    - 62
+
+    '
   vertical_prompts:
-    - 63
-    - 64
-    - 65
+  - 59
+  - 61
+  - 62
+  - 63
+  - 64
+  horizontal_prompts:
+  - 69
+  - 51
+  - 76
+  - 19
+  - 43
 - id: 61
-  topic: Using the os Module
-  position: DEVELOPMENT ENVIRONMENT - Chapter 12
-  question: How do you use the os module?
-  answer: |
-    The os module provides functions to interact with the operating system.
-    Example:
+  position: 5.5.3 Accessing values
+  question: How do you access values in a Python dictionary?
+  answer: 'Values are accessed using their keys:
+
     ```python
-    import os
-    print(os.getcwd()) # Get current working directory
-    os.chdir("/tmp") # Change directory
-    print(os.listdir(".")) # List files in current directory
+
+    d = {''a'': 1, ''b'': 2}
+
+    print(d[''a''])  # 1
+
     ```
-  horizontal_prompts:
-    - 59
-    - 60
-    - 62
+
+    '
   vertical_prompts:
-    - 63
-    - 64
-    - 65
+  - 59
+  - 60
+  - 62
+  - 63
+  - 64
+  horizontal_prompts:
+  - 6
+  - 82
+  - 76
+  - 32
+  - 51
 - id: 62
-  topic: Using the random Module
-  position: DEVELOPMENT ENVIRONMENT - Chapter 12
-  question: How do you use the random module?
-  answer: |
-    The random module provides functions for generating random numbers and selecting random elements.
-    Example:
+  position: 5.5.4 Adding/updating entries
+  question: How do you add or update entries in a Python dictionary?
+  answer: 'Assign a value to a key to add or update an entry:
+
     ```python
-    import random
-    print(random.randint(1, 10)) # Integer between 1 and 10
-    print(random.choice(["apple", "banana", "cherry"])) # Random choice from list
+
+    d = {''a'': 1}
+
+    d[''b''] = 2
+
+    d[''a''] = 3
+
+    print(d)  # {''a'': 3, ''b'': 2}
+
     ```
-  horizontal_prompts:
-    - 59
-    - 60
-    - 61
+
+    '
   vertical_prompts:
-    - 63
-    - 64
-    - 65
+  - 59
+  - 60
+  - 61
+  - 63
+  - 64
+  horizontal_prompts:
+  - 6
+  - 51
+  - 69
+  - 81
+  - 82
 - id: 63
-  topic: Importing a Module
-  position: DEVELOPMENT ENVIRONMENT - Chapter 12
-  question: How do you import a module?
-  answer: |
-    Use the import keyword.
-    Example:
+  position: 5.5.5 Removing entries
+  question: How do you remove entries from a Python dictionary?
+  answer: 'Use the del statement or pop() method to remove entries:
+
     ```python
-    import math
+
+    d = {''a'': 1, ''b'': 2}
+
+    del d[''a'']
+
+    d.pop(''b'')
+
+    print(d)  # {}
+
     ```
-  horizontal_prompts:
-    - 59
-    - 62
-    - 64
+
+    '
   vertical_prompts:
-    - 65
-    - 66
-    - 67
+  - 59
+  - 60
+  - 61
+  - 62
+  - 64
+  horizontal_prompts:
+  - 1
+  - 6
+  - 76
+  - 81
+  - 32
 - id: 64
-  topic: Finding Documentation
-  position: DEVELOPMENT ENVIRONMENT - Chapter 12
-  question: How do you find documentation for a module?
-  answer: |
-    Use the official Python documentation or pydoc.
-    Example:
+  position: 5.5.6 Dictionary methods
+  question: What are some useful dictionary methods in Python?
+  answer: 'Dictionaries have methods like keys(), values(), and items():
+
     ```python
-    import math
-    help(math.sqrt)
+
+    d = {''a'': 1, ''b'': 2}
+
+    print(d.keys())    # dict_keys([''a'', ''b''])
+
+    print(d.values())  # dict_values([1, 2])
+
+    print(d.items())   # dict_items([(''a'', 1), (''b'', 2)])
+
     ```
-  horizontal_prompts:
-    - 59
-    - 63
-    - 65
+
+    '
   vertical_prompts:
-    - 66
-    - 67
-    - 68
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  horizontal_prompts:
+  - 6
+  - 82
+  - 32
+  - 76
+  - 43
 - id: 65
-  topic: Using help()
-  position: DEVELOPMENT ENVIRONMENT - Chapter 12
-  question: How do you use help() to learn about modules?
-  answer: |
-    help() can be used to get information about modules, classes, and functions.
-    Example:
-    ```python
-    import math
-    help(math.sqrt)
-    ```
-  horizontal_prompts:
-    - 59
-    - 64
-    - 66
+  position: 5.6.1 items()
+  question: How is the items() method used in Python dictionaries?
+  answer: "The items() method returns a view of the dictionary\u2019s key-value pairs:\n\
+    ```python\nd = {'a': 1, 'b': 2}\nfor k, v in d.items():\n    print(k, v)\n```\n"
   vertical_prompts:
-    - 67
-    - 68
-    - 69
+  - 66
+  - 67
+  - 68
+  - 59
+  - 60
+  horizontal_prompts:
+  - 51
+  - 32
+  - 19
+  - 43
+  - 82
+- id: 66
+  position: 5.6.2 enumerate()
+  question: How is the enumerate() function used in Python?
+  answer: "The enumerate() function adds a counter to an iterable:\n```python\nfor\
+    \ idx, value in enumerate(['a', 'b']):\n    print(idx, value)\n```\n"
+  vertical_prompts:
+  - 65
+  - 67
+  - 68
+  - 59
+  - 60
+  horizontal_prompts:
+  - 43
+  - 32
+  - 82
+  - 19
+  - 1
+- id: 67
+  position: 5.6.3 zip()
+  question: How is the zip() function used in Python?
+  answer: "The zip() function combines multiple iterables into tuples:\n```python\n\
+    a = [1, 2]\nb = ['x', 'y']\nfor pair in zip(a, b):\n    print(pair)\n# (1, 'x'),\
+    \ (2, 'y')\n```\n"
+  vertical_prompts:
+  - 65
+  - 66
+  - 68
+  - 59
+  - 60
+  horizontal_prompts:
+  - 69
+  - 82
+  - 19
+  - 6
+  - 32
+- id: 68
+  position: 5.6.4 sorted()
+  question: How is the sorted() function used in Python?
+  answer: 'The sorted() function returns a new sorted list from the items of any iterable:
+
+    ```python
+
+    nums = [3, 1, 2]
+
+    print(sorted(nums))  # [1, 2, 3]
+
+    ```
+
+    '
+  vertical_prompts:
+  - 65
+  - 66
+  - 67
+  - 59
+  - 60
+  horizontal_prompts:
+  - 81
+  - 76
+  - 1
+  - 19
+  - 69
+- id: 69
+  position: 7.1.1.1 f-string syntax
+  question: What is the syntax for formatted string literals (f-strings) in Python?
+  answer: 'F-strings are prefixed with ''f'' and allow expressions inside curly braces:
+
+    ```python
+
+    name = ''Alice''
+
+    print(f''Hello, {name}!'')  # Hello, Alice!
+
+    ```
+
+    '
+  vertical_prompts:
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  horizontal_prompts:
+  - 76
+  - 59
+  - 43
+  - 1
+  - 51
+- id: 70
+  position: 7.1.1.2 Expression evaluation
+  question: How are expressions evaluated inside f-strings in Python?
+  answer: 'Expressions inside curly braces in f-strings are evaluated at runtime:
+
+    ```python
+
+    x = 5
+
+    print(f''{x * 2}'')  # 10
+
+    ```
+
+    '
+  vertical_prompts:
+  - 69
+  - 71
+  - 72
+  - 73
+  - 74
+  horizontal_prompts:
+  - 81
+  - 1
+  - 6
+  - 43
+  - 59
+- id: 71
+  position: 7.1.1.3 Format specifiers
+  question: How do you use format specifiers in f-strings in Python?
+  answer: 'Format specifiers control how values are displayed in f-strings:
+
+    ```python
+
+    pi = 3.14159
+
+    print(f''{pi:.2f}'')  # 3.14
+
+    ```
+
+    '
+  vertical_prompts:
+  - 69
+  - 70
+  - 72
+  - 73
+  - 74
+  horizontal_prompts:
+  - 43
+  - 82
+  - 51
+  - 59
+  - 1
+- id: 72
+  position: 7.1.2.1 Basic formatting
+  question: How do you use the format() method for basic string formatting in Python?
+  answer: 'The format() method inserts values into placeholders in a string:
+
+    ```python
+
+    print(''Hello, {}''.format(''Bob''))  # Hello, Bob
+
+    ```
+
+    '
+  vertical_prompts:
+  - 69
+  - 70
+  - 71
+  - 73
+  - 74
+  horizontal_prompts:
+  - 69
+  - 82
+  - 43
+  - 51
+  - 81
+- id: 73
+  position: 7.1.2.2 Positional formatting
+  question: How do you use positional arguments with the format() method in Python?
+  answer: 'Positional arguments are inserted by their order:
+
+    ```python
+
+    print(''{} {} {}''.format(1, 2, 3))  # 1 2 3
+
+    ```
+
+    '
+  vertical_prompts:
+  - 69
+  - 70
+  - 71
+  - 72
+  - 74
+  horizontal_prompts:
+  - 69
+  - 82
+  - 43
+  - 19
+  - 81
+- id: 74
+  position: 7.1.2.3 Named formatting
+  question: How do you use named arguments with the format() method in Python?
+  answer: 'Named arguments are specified by name in the format() method:
+
+    ```python
+
+    print(''Name: {name}, Age: {age}''.format(name=''Alice'', age=30))
+
+    ```
+
+    '
+  vertical_prompts:
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  horizontal_prompts:
+  - 69
+  - 51
+  - 76
+  - 82
+  - 6
+- id: 75
+  position: 7.2.1.1 open() function
+  question: How do you open a file in Python?
+  answer: 'Use the open() function to open a file:
+
+    ```python
+
+    f = open(''file.txt'', ''r'')
+
+    ```
+
+    '
+  vertical_prompts:
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  horizontal_prompts:
+  - 19
+  - 1
+  - 6
+  - 82
+  - 81
+- id: 76
+  position: 7.2.1.2 read() methods
+  question: How do you read from a file in Python?
+  answer: 'Use the read(), readline(), or readlines() methods to read file contents:
+
+    ```python
+
+    f = open(''file.txt'', ''r'')
+
+    content = f.read()
+
+    f.close()
+
+    ```
+
+    '
+  vertical_prompts:
+  - 77
+  - 78
+  - 79
+  - 80
+  - 69
+  horizontal_prompts:
+  - 69
+  - 76
+  - 59
+  - 51
+  - 19
+- id: 77
+  position: 7.2.1.3 write() methods
+  question: How do you write to a file in Python?
+  answer: 'Use the write() or writelines() methods to write to a file:
+
+    ```python
+
+    f = open(''file.txt'', ''w'')
+
+    f.write(''Hello'')
+
+    f.close()
+
+    ```
+
+    '
+  vertical_prompts:
+  - 76
+  - 78
+  - 79
+  - 80
+  - 69
+  horizontal_prompts:
+  - 76
+  - 81
+  - 82
+  - 69
+  - 19
+- id: 78
+  position: 7.2.1.4 close() method
+  question: How do you close a file in Python?
+  answer: 'Use the close() method to close a file and free resources:
+
+    ```python
+
+    f = open(''file.txt'', ''r'')
+
+    f.close()
+
+    ```
+
+    '
+  vertical_prompts:
+  - 76
+  - 77
+  - 79
+  - 80
+  - 69
+  horizontal_prompts:
+  - 43
+  - 6
+  - 1
+  - 59
+  - 81
+- id: 79
+  position: 7.2.1.5 with statement
+  question: How do you use the with statement for file operations in Python?
+  answer: "The with statement automatically closes the file when done:\n```python\n\
+    with open('file.txt', 'r') as f:\n    content = f.read()\n```\n"
+  vertical_prompts:
+  - 76
+  - 77
+  - 78
+  - 80
+  - 69
+  horizontal_prompts:
+  - 69
+  - 59
+  - 76
+  - 82
+  - 43
+- id: 80
+  position: 8.1.1 Syntax error identification
+  question: How do you identify syntax errors in Python code?
+  answer: 'Syntax errors are detected by the Python interpreter and usually include
+    a message and the line number:
+
+    ```python
+
+    print(''Hello''
+
+    # SyntaxError: unexpected EOF while parsing
+
+    ```
+
+    '
+  vertical_prompts:
+  - 76
+  - 77
+  - 78
+  - 79
+  - 69
+  horizontal_prompts:
+  - 76
+  - 6
+  - 81
+  - 69
+  - 1
+- id: 81
+  position: 8.1.2 Error messages interpretation
+  question: How do you interpret Python error messages?
+  answer: 'Error messages provide information about the type and location of the error:
+
+    ```python
+
+    print(1/0)
+
+    # ZeroDivisionError: division by zero
+
+    ```
+
+    '
+  vertical_prompts:
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  horizontal_prompts:
+  - 81
+  - 6
+  - 82
+  - 76
+  - 51
+- id: 82
+  position: 8.2.1 Common exception types
+  question: What are some common exception types in Python?
+  answer: 'Common exceptions include ValueError, TypeError, and IndexError:
+
+    ```python
+
+    int(''abc'')  # ValueError
+
+    1 + ''a''    # TypeError
+
+    [][2]      # IndexError
+
+    ```
+
+    '
+  vertical_prompts:
+  - 81
+  - 83
+  - 84
+  - 85
+  - 86
+  horizontal_prompts:
+  - 59
+  - 19
+  - 43
+  - 81
+  - 51
+- id: 83
+  position: 8.2.2 Exception hierarchy
+  question: What is the exception hierarchy in Python?
+  answer: "All exceptions inherit from the BaseException class. Most user-defined\
+    \ exceptions should inherit from Exception:\n```python\nclass MyError(Exception):\n\
+    \    pass\n```\n"
+  vertical_prompts:
+  - 84
+  - 85
+  - 81
+  - 82
+  - 86
+  horizontal_prompts:
+  - 6
+  - 59
+  - 51
+  - 43
+  - 1
+- id: 84
+  position: 8.2.3 Exception messages
+  question: How do you get the message from an exception in Python?
+  answer: "Exception messages can be accessed using the str() function or the args\
+    \ attribute:\n```python\ntry:\n    1/0\nexcept Exception as e:\n    print(str(e))\n\
+    ```\n"
+  vertical_prompts:
+  - 83
+  - 85
+  - 81
+  - 82
+  - 86
+  horizontal_prompts:
+  - 69
+  - 82
+  - 6
+  - 76
+  - 81
+- id: 85
+  position: 8.3.1 try-except blocks
+  question: How do you use try-except blocks in Python?
+  answer: "try-except blocks handle exceptions and prevent program crashes:\n```python\n\
+    try:\n    x = 1 / 0\nexcept ZeroDivisionError:\n    print('Cannot divide by zero')\n\
+    ```\n"
+  vertical_prompts:
+  - 83
+  - 84
+  - 81
+  - 82
+  - 86
+  horizontal_prompts:
+  - 1
+  - 76
+  - 19
+  - 51
+  - 59
+- id: 86
+  position: 8.3.2 Multiple except clauses
+  question: How do you use multiple except clauses in Python?
+  answer: "Multiple except clauses can handle different exception types:\n```python\n\
+    try:\n    int('abc')\nexcept ValueError:\n    print('Value error')\nexcept TypeError:\n\
+    \    print('Type error')\n```\n"
+  vertical_prompts:
+  - 87
+  - 88
+  - 81
+  - 82
+  - 83
+  horizontal_prompts:
+  - 6
+  - 81
+  - 1
+  - 43
+  - 59
+- id: 87
+  position: 8.3.3 else clause
+  question: How is the else clause used in try-except blocks in Python?
+  answer: "The else clause runs if no exception occurs in the try block:\n```python\n\
+    try:\n    x = 1\nexcept Exception:\n    print('Error')\nelse:\n    print('No error')\n\
+    ```\n"
+  vertical_prompts:
+  - 86
+  - 88
+  - 81
+  - 82
+  - 83
+  horizontal_prompts:
+  - 69
+  - 76
+  - 6
+  - 1
+  - 19
+- id: 88
+  position: 8.3.4 finally clause
+  question: How is the finally clause used in try-except blocks in Python?
+  answer: "The finally clause always runs, whether or not an exception occurred:\n\
+    ```python\ntry:\n    x = 1\nexcept Exception:\n    print('Error')\nfinally:\n\
+    \    print('Cleanup')\n```\n"
+  vertical_prompts:
+  - 86
+  - 87
+  - 81
+  - 82
+  - 83
+  horizontal_prompts:
+  - 76
+  - 82
+  - 43
+  - 6
+  - 51

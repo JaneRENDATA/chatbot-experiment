@@ -17,8 +17,9 @@ interface IMessage {
   id: number;
   text: string;
   isUser: boolean;
-  prompts?: string[]; // 新增 prompts 字段
+  prompts?: string[]; // Keep as string array for now
   source?: string; // 新增 source 字段
+  requestStep?: number; // Store the step used for this request
 }
 
 const LOCAL_STORAGE_KEY = 'chatbox_messages_v1';
@@ -29,6 +30,12 @@ interface ChatboxProps {
   fileName?: string | null;
   scrapedUrl?: string | null;
   role?: string;
+}
+
+interface IChatFlow {
+  messages: IMessage[];
+  step?: number;
+  mixedStep?: number;
 }
 
 // 在组件外部添加处理函数
@@ -74,21 +81,33 @@ function createParagraph(isRule: boolean) {
 }
 
 const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) => {
-  const [messages, setMessages] = useState<IMessage[]>(() => {
+  // 三种模式独立的聊天流和计数，显式类型
+  const [chatFlows, setChatFlows] = useState<Record<'horizontal' | 'vertical' | 'mixed', IChatFlow>>(() => {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-        return saved ? JSON.parse(saved) : [];
-      } catch {
-        return [];
-      }
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            horizontal: parsed.horizontal || { messages: [], step: 1 },
+            vertical: parsed.vertical || { messages: [], step: 1 },
+            mixed: parsed.mixed || { messages: [], mixedStep: 1 },
+          };
+        }
+      } catch {}
     }
-    return [];
+    return {
+      horizontal: { messages: [], step: 1 },
+      vertical: { messages: [], step: 1 },
+      mixed: { messages: [], mixedStep: 1 },
+    };
   });
+  const [activeMode, setActiveMode] = useState<'horizontal' | 'vertical' | 'mixed'>('horizontal');
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [showPromptModal, setShowPromptModal] = useState(false);
+  const [showFollowUpAsText, setShowFollowUpAsText] = useState(false);
   const [prompt, setPrompt] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -103,16 +122,17 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
   const [tempPrompt, setTempPrompt] = useState(prompt);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-  const [recommendMode, setRecommendMode] = useState<'horizontal' | 'vertical'>('horizontal');
+  const [showAsText, setShowAsText] = useState(false);
+  const [showColors, setShowColors] = useState(true);
 
-  // 聊天记录持久化
+  // 聊天记录持久化（可选：可按activeMode分别存储）
   useEffect(() => {
     try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(chatFlows));
     } catch (error) {
       console.warn('localStorage error:', error);
     }
-  }, [messages]);
+  }, [chatFlows]);
 
   // prompt 持久化
   useEffect(() => {
@@ -125,33 +145,47 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [chatFlows, activeMode]);
 
-  // 计算当前步数（用户消息数量）
-  const getStep = () => messages.filter(m => m.isUser).length + 1;
+  // 切换推荐模式Tab时不重置内容，只切换activeMode
+  const handleModeChange = (mode: 'horizontal' | 'vertical' | 'mixed') => {
+    setActiveMode(mode);
+    setInput('');
+  };
+
+  // 获取当前模式的聊天流和step
+  const currentFlow = chatFlows[activeMode];
+  const messages = currentFlow.messages;
+  const step = activeMode === 'mixed' ? currentFlow.mixedStep! : currentFlow.step!;
 
   // 点击推荐 prompt
   const handlePromptClick = (promptText: string) => {
-    setInput(promptText);
+    // Extract only the question part (remove position)
+    // Format: "3.1.1.1 How are integers used in Python..." -> "How are integers used in Python..."
+    const questionMatch = promptText.match(/^[\d.]+ (.+)$/);
+    const questionOnly = questionMatch ? questionMatch[1] : promptText;
+    
+    setInput(questionOnly);
     setTimeout(() => {
-      // 自动提交
       const form = document.querySelector('form');
       if (form) form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
     }, 0);
   };
 
+  // 提交消息，更新当前模式的聊天流和step
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!input.trim()) return;
-
     const userMessage: IMessage = { id: Date.now(), text: input, isUser: true };
-    setMessages(prev => [...prev, userMessage]);
+    setChatFlows(prev => {
+      const flow = { ...prev[activeMode] };
+      flow.messages = [...flow.messages, userMessage];
+      return { ...prev, [activeMode]: flow };
+    });
     setInput('');
     setIsLoading(true);
     setShowLoading(true);
-
     // 构造请求体
-    const step = getStep();
     const payload = {
       messages: [
         { role: 'system', content: prompt },
@@ -159,13 +193,15 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
         { role: 'user', content: input }
       ],
       step,
-      recommendMode // 新增推荐方式参数
+      recommendMode: activeMode,
+      ...(activeMode === 'mixed' ? { mixedStep: step } : {})
     };
-
-    // 先插入一个空的 AI 消息
     const aiMsgId = Date.now() + 1;
-    setMessages(prev => [...prev, { id: aiMsgId, text: '', isUser: false }]);
-
+    setChatFlows(prev => {
+      const flow = { ...prev[activeMode] };
+      flow.messages = [...flow.messages, { id: aiMsgId, text: '', isUser: false, requestStep: step }];
+      return { ...prev, [activeMode]: flow };
+    });
     try {
       const response = await fetch(`${CHAT_BASE_URL}/chat/stream`, {
         method: 'POST',
@@ -185,8 +221,6 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const now = Date.now();
-        console.log('[前端] 收到 chunk:', now, decoder.decode(value));
         const chunk = decoder.decode(value);
         const lines = chunk.split('\n').filter(line => line.trim() !== '');
         for (const line of lines) {
@@ -196,17 +230,14 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
               const json = JSON.parse(data);
               const delta = json.choices?.[0]?.delta;
               if (delta?.content) {
-                aiText += delta.content; // 逐步追加，保证流式体验
-                // 新增：如果 source 字段存在且为 'rule'，立刻更新 msg.source
-                if (json.choices?.[0]?.source === 'rule') {
-                  setMessages(prev => prev.map(msg =>
-                    msg.id === aiMsgId ? { ...msg, text: aiText, source: 'rule' } : msg
-                  ));
-                } else {
-                  setMessages(prev => prev.map(msg =>
-                    msg.id === aiMsgId ? { ...msg, text: aiText } : msg
-                  ));
-                }
+                aiText += delta.content;
+                setChatFlows(prev => {
+                  const flow = { ...prev[activeMode] };
+                  flow.messages = flow.messages.map(msg =>
+                    msg.id === aiMsgId ? { ...msg, text: aiText, source: json.choices?.[0]?.source } : msg
+                  );
+                  return { ...prev, [activeMode]: flow };
+                });
                 if (firstChunk) {
                   setShowLoading(false);
                   firstChunk = false;
@@ -215,52 +246,108 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
               if (json.choices?.[0]?.finish_reason === 'stop') {
                 prompts = json.choices?.[0]?.prompts || [];
                 source = json.choices?.[0]?.source;
-                setMessages(prev => prev.map(msg =>
-                  msg.id === aiMsgId ? { ...msg, prompts, source } : msg
-                ));
+                setChatFlows(prev => {
+                  const flow = { ...prev[activeMode] };
+                  flow.messages = flow.messages.map(msg =>
+                    msg.id === aiMsgId ? { ...msg, prompts, source } : msg
+                  );
+                  return { ...prev, [activeMode]: flow };
+                });
               }
-            } catch (e) {
-              // 忽略解析错误
-            }
+            } catch (e) {}
           }
         }
       }
     } catch (error: any) {
-      setMessages(prev => prev.map(msg =>
-        msg.id === aiMsgId ? { ...msg, text: `Error: ${error.message}` } : msg
-      ));
+      setChatFlows(prev => {
+        const flow = { ...prev[activeMode] };
+        flow.messages = flow.messages.map(msg =>
+          msg.id === aiMsgId ? { ...msg, text: `Error: ${error.message}` } : msg
+        );
+        return { ...prev, [activeMode]: flow };
+      });
       setShowLoading(false);
     } finally {
       setIsLoading(false);
       setShowLoading(false);
+      setChatFlows(prev => {
+        const flow = { ...prev[activeMode] };
+        if (activeMode === 'mixed') {
+          flow.mixedStep = (flow.mixedStep || 1) + 1;
+        } else {
+          flow.step = (flow.step || 1) + 1;
+        }
+        return { ...prev, [activeMode]: flow };
+      });
     }
+  };
+
+  const getFollowUpColor = (promptType: 'cross-topic' | 'in-depth') => {
+    if (!showColors) {
+      // Default blue color when colors are hidden
+      return 'bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-300';
+    }
+    
+    return promptType === 'cross-topic'
+      ? 'bg-green-100 hover:bg-green-200 text-green-800 border-green-300'
+      : 'bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-300';
+  };
+
+  const getFollowUpTextColor = (promptType: 'cross-topic' | 'in-depth') => {
+    if (!showColors) {
+      // Default blue text color when colors are hidden
+      return 'text-blue-700';
+    }
+    
+    return promptType === 'cross-topic' ? 'text-green-700' : 'text-blue-700';
   };
 
   return (
     <div className="w-full sm:w-[70vw] max-w-none mx-auto px-0 sm:px-4 flex flex-col bg-white sm:rounded-2xl sm:shadow sm:border sm:border-gray-200 sm:p-6 p-2">
-      {/* 推荐方式切换按钮 */}
+      {/* 推荐方式Tab切换 */}
       <div className="flex flex-wrap w-full items-center mb-4 gap-2">
         <button
           className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
-            ${recommendMode === 'horizontal'
+            ${activeMode === 'horizontal'
               ? 'bg-green-500 text-white border-green-600 shadow-md'
               : 'bg-gray-100 text-green-700 border-green-300 hover:bg-green-50'}
           `}
-          onClick={() => setRecommendMode('horizontal')}
+          onClick={() => handleModeChange('horizontal')}
           disabled={isLoading}
         >
-          Version A (cross-topic)
+          Cross-Topic
         </button>
         <button
           className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
-            ${recommendMode === 'vertical'
+            ${activeMode === 'vertical'
+              ? 'bg-blue-500 text-white border-blue-600 shadow-md'
+              : 'bg-gray-100 text-blue-700 border-blue-300 hover:bg-blue-50'}
+          `}
+          onClick={() => handleModeChange('vertical')}
+          disabled={isLoading}
+        >
+          In-Depth
+        </button>
+        <button
+          className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
+            ${activeMode === 'mixed'
               ? 'bg-purple-500 text-white border-purple-600 shadow-md'
               : 'bg-gray-100 text-purple-700 border-purple-300 hover:bg-purple-50'}
           `}
-          onClick={() => setRecommendMode('vertical')}
+          onClick={() => handleModeChange('mixed')}
           disabled={isLoading}
         >
-          Version B (in-depth)
+          Mixed
+        </button>
+        <button
+          className={`flex-1 min-w-[80px] max-w-full px-4 py-1 rounded border transition ${
+            showFollowUpAsText
+              ? 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200'
+              : 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
+          }`}
+          onClick={() => setShowFollowUpAsText(!showFollowUpAsText)}
+        >
+          {showFollowUpAsText ? 'Show as Buttons' : 'Show as Text'}
         </button>
         <button
           className="flex-1 min-w-[80px] max-w-full px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
@@ -277,6 +364,16 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
         <span className="ml-4 text-xs text-gray-400 truncate max-w-[60%]" title={prompt}>
           Current Prompt: {prompt}
         </span>
+        <button
+          className={`flex-1 min-w-[80px] max-w-full px-4 py-1 rounded border transition ${
+            showColors
+              ? 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200'
+              : 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200'
+          }`}
+          onClick={() => setShowColors(!showColors)}
+        >
+          {showColors ? 'Hide Colors' : 'Differentiate Colors'}
+        </button>
       </div>
       {/* Clear History Confirmation Modal */}
       {showClearConfirm && (
@@ -293,7 +390,11 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
               <button
                 className="px-4 py-1 rounded bg-red-600 text-white border border-red-700 hover:bg-red-700"
                 onClick={() => {
-                  setMessages([]);
+                  setChatFlows({
+                    horizontal: { messages: [], step: 1 },
+                    vertical: { messages: [], step: 1 },
+                    mixed: { messages: [], mixedStep: 1 },
+                  });
                   if (typeof window !== 'undefined') {
                     localStorage.removeItem(LOCAL_STORAGE_KEY);
                   }
@@ -306,7 +407,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           </div>
         </div>
       )}
-      {/* 聊天内容 */}
+      {/* 聊天内容渲染，渲染当前模式的messages */}
       <div className="flex-1 overflow-y-auto mb-4">
         {messages.map((msg, idx) => (
           <div
@@ -326,27 +427,27 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
                 <span>{msg.text}</span>
               ) : (
                 <>
-                  <ReactMarkdown
-                    components={{
-                      code({node, inline, className, children, ...props}) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        return !inline ? (
+                <ReactMarkdown
+                  components={{
+                    code({node, inline, className, children, ...props}) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline ? (
                           <div style={{ margin: '0.5em 0' }}>
-                            <CodeBlock language={match?.[1] || ''} value={String(children).replace(/\n$/, '')} />
+                        <CodeBlock language={match?.[1] || ''} value={String(children).replace(/\n$/, '')} />
                           </div>
-                        ) : (
-                          <code className={className} {...props}>{children}</code>
-                        );
+                      ) : (
+                        <code className={className} {...props}>{children}</code>
+                      );
                       },
                       p: createParagraph(msg.source === 'rule')
-                    }}
-                  >
+                  }}
+                >
                     {typeof msg.text === 'string'
                       ? (msg.source === 'LLM'
                           ? processLLMText(msg.text)
                           : msg.text)
                       : ''}
-                  </ReactMarkdown>
+                </ReactMarkdown>
                   {showLoading && idx === messages.length - 1 && (
                     <span className="inline-flex items-center ml-1 align-bottom">
                       <span className="animate-bounce text-2xl text-gray-400 select-none">.</span>
@@ -356,25 +457,76 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
                   )}
                 </>
               )}
-              {/* 推荐 prompt 按钮等... */}
-              {msg.prompts && msg.prompts.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {msg.prompts.map((p, idx) => (
-                    <button
-                      key={idx}
-                      className="px-3 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition text-sm"
-                      onClick={() => handlePromptClick(p)}
-                      disabled={isLoading}
-                    >
-                      {p}
-                    </button>
-                  ))}
+              {/* 推荐内容渲染，假设 prompts 是一个字符串数组 */}
+              {Array.isArray(msg.prompts) && msg.prompts.length > 0 && (
+                <div className="mt-2 flex flex-col gap-2 items-start">
+                  <div className="text-sm text-gray-500 mb-1">You may also be interested in the following:</div>
+                  {showFollowUpAsText ? (
+                    // Text mode: display position and question separately
+                    <div className="text-sm space-y-1">
+                      {msg.prompts.map((prompt, i) => {
+                        const positionMatch = prompt.match(/^([0-9.]+) (.+)$/);
+                        const fullPosition = positionMatch ? positionMatch[1] : '';
+                        const question = positionMatch ? positionMatch[2] : prompt;
+                        
+                        // Remove the last position number (e.g., "3.1.1.1" -> "3.1.1")
+                        const displayPosition = fullPosition.split('.').slice(0, -1).join('.');
+                        
+                        // For mixed mode, determine colors based on the step used for this request
+                        const isMixedMode = activeMode === 'mixed';
+                        const requestStep = msg.requestStep || 1;
+                        const isOddStep = requestStep % 2 === 1;
+                        const crossCount = isOddStep ? 3 : 2;
+                        const isCrossTopic = i < crossCount;
+                        
+                        return (
+                          <div key={i} className="flex items-start">
+                            <span className={`mr-2 min-w-[60px] font-mono text-xs ${showColors ? (activeMode === 'horizontal' ? 'text-green-600' : activeMode === 'vertical' ? 'text-blue-600' : (isCrossTopic ? 'text-green-600' : 'text-blue-600')) : 'text-blue-700'}`}>
+                              {displayPosition}
+                            </span>
+                            <span className={`whitespace-pre-line ${showColors ? (activeMode === 'horizontal' ? 'text-green-700' : activeMode === 'vertical' ? 'text-blue-700' : (isCrossTopic ? 'text-green-700' : 'text-blue-700')) : 'text-blue-700'}`}>{question}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    // Button mode: display full text (position + question) as clickable buttons
+                    msg.prompts.map((prompt, i) => {
+                      const positionMatch = prompt.match(/^([0-9.]+) (.+)$/);
+                      const fullPosition = positionMatch ? positionMatch[1] : '';
+                      const question = positionMatch ? positionMatch[2] : prompt;
+                      
+                      // Remove the last position number for display
+                      const displayPosition = fullPosition.split('.').slice(0, -1).join('.');
+                      const displayText = positionMatch ? `${displayPosition} ${question}` : prompt;
+                      
+                      // For mixed mode, determine colors based on the step used for this request
+                      const isMixedMode = activeMode === 'mixed';
+                      const requestStep = msg.requestStep || 1;
+                      const isOddStep = requestStep % 2 === 1;
+                      const crossCount = isOddStep ? 3 : 2;
+                      const isCrossTopic = i < crossCount;
+                      
+                      return (
+                        <button
+                          key={i}
+                          className={`text-left px-3 py-2 rounded-lg border transition text-sm ${showColors ? (activeMode === 'horizontal' ? 'bg-green-100 hover:bg-green-200 text-green-800 border-green-300' : activeMode === 'vertical' ? 'bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-300' : (isCrossTopic ? 'bg-green-100 hover:bg-green-200 text-green-800 border-green-300' : 'bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-300')) : 'bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-300'}`}
+                          onClick={() => handlePromptClick(prompt)}
+                          disabled={isLoading}
+                        >
+                          <span className={`font-medium ${showColors ? (activeMode === 'horizontal' ? 'text-green-700' : activeMode === 'vertical' ? 'text-blue-700' : (isCrossTopic ? 'text-green-700' : 'text-blue-700')) : 'text-blue-700'}`}>
+                            {displayText}
+                          </span>
+                        </button>
+                      );
+                    })
+                  )}
                 </div>
               )}
-              {/* 显示来源标签 */}
-              {msg.source && (
+              {/* 显示来源标签 - 已移除，让用户无法区分规则和LLM响应 */}
+              {/* {msg.source && (
                 <span className="text-xs text-gray-400 ml-2">[{msg.source === 'rule' ? 'Rule' : 'LLM'}]</span>
-              )}
+              )} */}
             </div>
           </div>
         ))}

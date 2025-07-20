@@ -14,11 +14,50 @@ interface RuleNode {
 
 interface FlatRule {
   id: number;
-  topic: string;
+  position: string;
   question: string;
   answer: string;
   horizontal_prompts: string[];
   vertical_prompts: string[];
+}
+
+// 简单Jaro-Winkler相似度实现（0~1）
+function jaroWinkler(s1: string, s2: string): number {
+  if (s1 === s2) return 1;
+  const m = Math.floor(Math.max(s1.length, s2.length) / 2) - 1;
+  let matches = 0, transpositions = 0;
+  const s1Matches = Array(s1.length).fill(false);
+  const s2Matches = Array(s2.length).fill(false);
+  for (let i = 0; i < s1.length; i++) {
+    const start = Math.max(0, i - m);
+    const end = Math.min(i + m + 1, s2.length);
+    for (let j = start; j < end; j++) {
+      if (!s2Matches[j] && s1[i] === s2[j]) {
+        s1Matches[i] = true;
+        s2Matches[j] = true;
+        matches++;
+        break;
+      }
+    }
+  }
+  if (matches === 0) return 0;
+  let k = 0;
+  for (let i = 0; i < s1.length; i++) {
+    if (s1Matches[i]) {
+      while (!s2Matches[k]) k++;
+      if (s1[i] !== s2[k]) transpositions++;
+      k++;
+    }
+  }
+  transpositions /= 2;
+  const jaro = (matches / s1.length + matches / s2.length + (matches - transpositions) / matches) / 3;
+  // Jaro-Winkler prefix boost
+  let prefix = 0;
+  for (let i = 0; i < Math.min(4, s1.length, s2.length); i++) {
+    if (s1[i] === s2[i]) prefix++;
+    else break;
+  }
+  return jaro + prefix * 0.1 * (1 - jaro);
 }
 
 @Injectable()
@@ -26,9 +65,9 @@ export class ChatService {
   constructor(private readonly deepSeekService: DeepSeekService) {
   }
 
-  // 辅助：归一化字符串，去除标点、全小写、去多余空格
-  private normalize(str: string): string {
-    return str.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+  // 防御式normalize，兼容undefined
+  private normalize(str: string | undefined): string {
+    return (str || '').toLowerCase().replace(/\s+/g, '').trim();
   }
 
   // Always load rules from YAML for every request
@@ -38,24 +77,42 @@ export class ChatService {
     return yaml.load(raw) as FlatRule[];
   }
 
-  // 查找知识点，支持归一化精确匹配
+  // 查找知识点，支持归一化匹配question和position，Jaro-Winkler相似度>=0.95
   private findRule(input: string): FlatRule | undefined {
     const rules = this.getRules();
     const normInput = this.normalize(input);
-    return rules.find(rule =>
-      this.normalize(rule.question) === normInput ||
-      this.normalize(rule.topic) === normInput
-    );
+    let best: {rule: FlatRule, score: number} | null = null;
+    for (const rule of rules) {
+      const qScore = jaroWinkler(this.normalize(rule.question), normInput);
+      if (!best || qScore > best.score) best = {rule, score: qScore};
+      const pScore = jaroWinkler(this.normalize(rule.position), normInput);
+      if (pScore > best.score) best = {rule, score: pScore};
+    }
+    return best && best.score >= 0.95 ? best.rule : undefined;
   }
 
-  public matchRuleFlat(input: string, mode: 'horizontal' | 'vertical' = 'horizontal'): { content: string; prompts: string[] } | null {
+  public matchRuleFlat(input: string, mode: 'horizontal' | 'vertical' | 'mixed' = 'horizontal', mixedStep?: number): { content: string; prompts: string[] } | null {
     const rules = this.getRules();
     const rule = this.findRule(input);
     if (!rule) return null;
-    // prompts 是 id 数组，转成 question
-    const promptIds = mode === 'horizontal' ? rule.horizontal_prompts : rule.vertical_prompts;
+    let promptIds: string[] = [];
+    if (mode === 'mixed' && typeof mixedStep === 'number') {
+      const isOdd = mixedStep % 2 === 1;
+      const cross = rule.horizontal_prompts.slice(0, isOdd ? 3 : 2);
+      const inDepth = rule.vertical_prompts.slice(0, isOdd ? 2 : 3);
+      promptIds = [...cross, ...inDepth];
+    } else {
+      promptIds = mode === 'horizontal' ? rule.horizontal_prompts : rule.vertical_prompts;
+    }
     const prompts = promptIds
-      .map(id => rules.find(r => r.id === Number(id))?.question)
+      .map(id => {
+        const foundRule = rules.find(r => r.id === Number(id));
+        if (!foundRule) return null;
+        // Extract only the numeric part of position (e.g., "3.1.1.1 Integer operations" -> "3.1.1.1")
+        const numericPosition = foundRule.position.match(/^[\d.]+/)?.[0] || foundRule.position;
+        // Return format: "position question" (e.g., "3.1.1.1 How are integers used in Python...")
+        return `${numericPosition} ${foundRule.question}`;
+      })
       .filter(Boolean) as string[];
     return {
       content: rule.answer,
@@ -179,10 +236,10 @@ export class ChatService {
     }
   }
 
-  async chatWithRuleOrLLM(messages: any[], step: number, recommendMode: 'horizontal' | 'vertical' = 'horizontal') {
+  async chatWithRuleOrLLM(messages: any[], step: number, recommendMode: 'horizontal' | 'vertical' | 'mixed' = 'horizontal', mixedStep?: number) {
     const rules = this.getRules();
     const userInput = messages[messages.length - 1]?.content || '';
-    const ruleResult = this.matchRuleFlat(userInput, recommendMode);
+    const ruleResult = this.matchRuleFlat(userInput, recommendMode, mixedStep);
     if (ruleResult) {
       return {
         choices: [
@@ -197,39 +254,166 @@ export class ChatService {
       };
     }
 
-    // 区分 horizontal/vertical，但不在 system prompt 里体现，而是追加一条 user 指令
-    const recommendInstruction = recommendMode === 'horizontal'
-      ? `Please provide 3 cross-topic (related but different topics) recommended questions in the following format, each on a new line. Each question should be no more than 80 characters:
-Suggestion 1: <your first suggested question>
-Suggestion 2: <your second suggested question>
-Suggestion 3: <your third suggested question>`
-      : `Please provide 3 in-depth (follow-up or deeper questions on the same topic) recommended questions in the following format, each on a new line. Each question should be no more than 80 characters:
-Suggestion 1: <your first suggested question>
-Suggestion 2: <your second suggested question>
-Suggestion 3: <your third suggested question>`;
-    const llmMessages = [
-      ...messages,
-      { role: 'user', content: recommendInstruction }
+    // First, analyze the user's question to determine its topic/section
+    const analysisPrompt = `Analyze this Python question and determine which section of the Python tutorial it belongs to. Use this exact mapping:
+
+3.1.1 - Numbers and arithmetic operations
+  Examples: Integer operations, Float operations, Division types, Modulo operator, Power operator
+
+3.1.2 - Strings and text processing  
+  Examples: String literals, String concatenation, String indexing, String slicing, String length, String immutability
+
+3.1.3 - Lists and list operations
+  Examples: List creation, List indexing, List slicing, List concatenation, List modification, List nesting, List length
+
+4.1 - Conditional statements (if/elif/else)
+  Examples: Basic if syntax, elif clause, else clause, Comparison operators
+
+4.2 - For loops and iteration
+  Examples: Basic for loop syntax, Iterating over sequences, Loop variables, Nested loops
+
+4.3 - Range function
+  Examples: range with one argument, range with start and stop, range with step
+
+4.4 - Loop control (break/continue)
+  Examples: break statement usage, continue statement usage
+
+4.8 - Functions
+  Examples: Function definition syntax, Parameters, Return statement, Function calls, Scope rules
+
+4.9 - Function arguments
+  Examples: Setting default values, Optional arguments, Named arguments, Argument order
+
+5.1 - Lists as stacks and queues
+  Examples: append() method, pop() method, LIFO principle, collections.deque, FIFO principle
+
+5.2 - List and variable deletion
+  Examples: Deleting list elements, Deleting variables
+
+5.3 - Tuples
+  Examples: Tuple creation, Tuple packing, Tuple unpacking, Tuple immutability
+
+5.4 - Sets
+  Examples: Set creation, Set operations, Set comprehensions, Set methods
+
+5.5 - Dictionaries
+  Examples: Dictionary creation, Key-value pairs, Accessing values, Adding/updating entries, Removing entries
+
+5.6 - Dictionary and sequence utilities
+  Examples: items(), enumerate(), zip(), sorted()
+
+7.1 - String formatting
+  Examples: f-string syntax, Expression evaluation, Format specifiers, Basic formatting, Positional formatting
+
+7.2 - File input/output
+  Examples: open() function, read() methods, write() methods, close() method, with statement
+
+8.1 - Error handling basics
+  Examples: Syntax error identification, Error messages interpretation
+
+8.2 - Exception types
+  Examples: Common exception types, Exception hierarchy, Exception messages
+
+8.3 - Exception handling
+  Examples: try-except blocks, Multiple except clauses, else clause, finally clause
+
+Question: "${userInput}"
+
+Respond with ONLY the section number (e.g., 3.1.1, 3.1.2, 4.1, 4.2, 5.1, 7.2, 8.1, etc.):`;
+    
+    const analysisMessages = [
+      { role: 'user', content: analysisPrompt }
     ];
-    const llmResult = await this.chatWithAI(llmMessages);
-    const contentRaw = llmResult.choices[0].message.content;
-    // 用正则提取三条建议
-    const promptMatches = Array.from(contentRaw.matchAll(/Suggestion \d+:\s*(.+)/g)) as RegExpMatchArray[];
-    const prompts = promptMatches.map(m => m[1].trim()).slice(0, 3);
-    while (prompts.length < 3) prompts.push('');
-    // answer 内容为 Suggestion 1: 之前的部分
-    const suggestionIndex = contentRaw.search(/Suggestion 1:/);
-    const content = suggestionIndex > 0 ? contentRaw.slice(0, suggestionIndex).trim() : contentRaw.trim();
-    return {
-      choices: [
-        {
-          message: {
-            content,
-            prompts,
-            source: "llm"
+    const analysisResult = await this.chatWithAI(analysisMessages);
+    const sectionNumber = analysisResult.choices[0].message.content.trim();
+    
+    // Find a rule that matches the identified section
+    const matchingRule = rules.find(r => r.position.startsWith(sectionNumber));
+    
+    if (matchingRule) {
+      // Use the existing rule's recommendations based on the mode
+      let promptIds: string[] = [];
+      if (recommendMode === 'mixed' && typeof mixedStep === 'number') {
+        const isOdd = mixedStep % 2 === 1;
+        const cross = matchingRule.horizontal_prompts.slice(0, isOdd ? 3 : 2);
+        const inDepth = matchingRule.vertical_prompts.slice(0, isOdd ? 2 : 3);
+        promptIds = [...cross, ...inDepth];
+      } else {
+        promptIds = recommendMode === 'horizontal' ? matchingRule.horizontal_prompts : matchingRule.vertical_prompts;
+      }
+      
+      const prompts = promptIds
+        .map(id => {
+          const foundRule = rules.find(r => r.id === Number(id));
+          if (!foundRule) return null;
+          const numericPosition = foundRule.position.match(/^[\d.]+/)?.[0] || foundRule.position;
+          return `${numericPosition} ${foundRule.question}`;
+        })
+        .filter(Boolean) as string[];
+      
+      // Ensure we have exactly 5 prompts
+      while (prompts.length < 5) {
+        prompts.push('');
+      }
+      const selectedPrompts = prompts.slice(0, 5);
+      
+      // Now provide the main answer to the user's question
+      const answerPrompt = `Please provide a helpful answer to this Python question. Focus on being clear and educational:
+
+Question: "${userInput}"
+
+Answer:`;
+      const llmMessages = [
+        ...messages,
+        { role: 'user', content: answerPrompt }
+      ];
+      const llmResult = await this.chatWithAI(llmMessages);
+      const contentRaw = llmResult.choices[0].message.content;
+      
+      const content = contentRaw.trim();
+      return {
+        choices: [
+          {
+            message: {
+              content,
+              prompts: selectedPrompts,
+              source: "llm"
+            }
           }
-        }
-      ]
-    };
+        ]
+      };
+    } else {
+      // Fallback: if no matching rule found, use random recommendations
+      const allRules = rules.sort(() => 0.5 - Math.random());
+      const selectedPrompts = allRules.slice(0, 5).map(rule => {
+        const numericPosition = rule.position.match(/^[\d.]+/)?.[0] || rule.position;
+        return `${numericPosition} ${rule.question}`;
+      });
+      
+      const answerPrompt = `Please provide a helpful answer to this Python question. Focus on being clear and educational:
+
+Question: "${userInput}"
+
+Answer:`;
+      const llmMessages = [
+        ...messages,
+        { role: 'user', content: answerPrompt }
+      ];
+      const llmResult = await this.chatWithAI(llmMessages);
+      const contentRaw = llmResult.choices[0].message.content;
+      
+      const content = contentRaw.trim();
+      return {
+        choices: [
+          {
+            message: {
+              content,
+              prompts: selectedPrompts,
+              source: "llm"
+            }
+          }
+        ]
+      };
+    }
   }
 } 

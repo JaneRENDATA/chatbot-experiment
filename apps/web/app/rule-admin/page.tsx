@@ -67,7 +67,6 @@ const RuleAdminPage: React.FC = () => {
           <thead className="sticky top-0 z-10 bg-gray-100">
             <tr>
               <th className="border px-3 py-2 whitespace-nowrap font-semibold text-gray-900">ID</th>
-              <th className="border px-3 py-2 whitespace-nowrap font-semibold text-gray-900">Topic</th>
               <th className="border px-3 py-2 whitespace-nowrap font-semibold text-gray-900">Position</th>
               <th className="border px-3 py-2 whitespace-nowrap font-semibold text-gray-900">Question</th>
               <th className="border px-3 py-2 whitespace-nowrap font-semibold text-gray-900">Horizontal IDs</th>
@@ -79,7 +78,6 @@ const RuleAdminPage: React.FC = () => {
             {rules.map((rule, idx) => (
               <tr key={rule.id} className={`transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50`}>
                 <td className="border px-3 py-2 text-center whitespace-nowrap rounded-l-lg text-black">{rule.id}</td>
-                <td className="border px-3 py-2 text-black w-24 break-words align-top">{rule.topic}</td>
                 <td className="border px-3 py-2 whitespace-nowrap text-black">{rule.position}</td>
                 <td className="border px-3 py-2 text-black align-top break-words whitespace-pre-line" style={{minWidth: '180px'}}>{rule.question}</td>
                 <td className="border px-3 py-2 text-center whitespace-nowrap text-black">{rule.horizontal_prompts?.join(', ')}</td>
@@ -104,15 +102,6 @@ const RuleAdminPage: React.FC = () => {
               }}
               className="space-y-3"
             >
-              <div>
-                <label className="block text-sm font-medium text-black mb-1">Topic</label>
-                <input
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  value={modalRule.topic}
-                  onChange={e => setModalRule({ ...modalRule, topic: e.target.value })}
-                  required
-                />
-              </div>
               <div>
                 <label className="block text-sm font-medium text-black mb-1">Position</label>
                 <input
