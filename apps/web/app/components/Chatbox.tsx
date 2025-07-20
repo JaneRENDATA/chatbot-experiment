@@ -440,7 +440,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
               className={`max-w-[80%] px-4 py-3 rounded-2xl whitespace-pre-line break-words shadow-sm ${
                 msg.isUser
                   ? 'bg-blue-500 text-white rounded-br-md ml-auto'
-                  : 'bg-gray-200 text-gray-900 rounded-bl-md'
+                  : 'bg-gray-100 text-gray-900 rounded-bl-md'
               }`}
               style={{ lineHeight: 1.4 }}
             >
