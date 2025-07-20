@@ -12,7 +12,7 @@ interface IRule {
   vertical_prompts: string[];
 }
 
-const RuleAdminPage: React.FC = () => {
+const RuleAdminPageComponent: React.FC = () => {
   const [rules, setRules] = useState<IRule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -170,4 +170,4 @@ const RuleAdminPage: React.FC = () => {
   );
 };
 
-export default RuleAdminPage; 
+export default RuleAdminPageComponent; 

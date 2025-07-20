@@ -94,7 +94,9 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
             mixed: parsed.mixed || { messages: [], mixedStep: 1 },
           };
         }
-      } catch {}
+      } catch (error) {
+        console.warn('localStorage error:', error);
+      }
     }
     return {
       horizontal: { messages: [], step: 1 },
@@ -254,7 +256,9 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
                   return { ...prev, [activeMode]: flow };
                 });
               }
-            } catch (e) {}
+            } catch (e) {
+              console.warn('JSON parse error:', e);
+            }
           }
         }
       }
