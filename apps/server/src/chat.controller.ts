@@ -42,6 +42,8 @@ export class ChatController {
     const recommendMode = body.recommendMode || 'horizontal';
     const mixedStep = recommendMode === 'mixed' ? body.mixedStep : undefined;
     const userInput = body.messages[body.messages.length - 1]?.content || '';
+    
+    console.log(`[DEBUG] Stream request - step: ${step}, recommendMode: ${recommendMode}, mixedStep: ${mixedStep}, body.mixedStep: ${body.mixedStep}`);
     // 规则平铺流式模拟
     const ruleResult = this.chatService.matchRuleFlat(userInput, recommendMode, mixedStep);
     if (ruleResult) {

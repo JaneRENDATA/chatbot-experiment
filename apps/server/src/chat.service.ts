@@ -101,6 +101,7 @@ export class ChatService {
       const cross = rule.horizontal_prompts.slice(0, isOdd ? 3 : 2);
       const inDepth = rule.vertical_prompts.slice(0, isOdd ? 2 : 3);
       promptIds = [...cross, ...inDepth];
+      console.log(`[DEBUG] Mixed mode - step: ${mixedStep}, isOdd: ${isOdd}, cross: ${cross.length}, inDepth: ${inDepth.length}, total: ${promptIds.length}`);
     } else {
       promptIds = mode === 'horizontal' ? rule.horizontal_prompts : rule.vertical_prompts;
     }
@@ -383,12 +384,39 @@ Answer:`;
         ]
       };
     } else {
-      // Fallback: if no matching rule found, use random recommendations
-      const allRules = rules.sort(() => 0.5 - Math.random());
-      const selectedPrompts = allRules.slice(0, 5).map(rule => {
-        const numericPosition = rule.position.match(/^[\d.]+/)?.[0] || rule.position;
-        return `${numericPosition} ${rule.question}`;
-      });
+      // Fallback: if no matching rule found, use mixed mode logic for recommendations
+      let selectedPrompts: string[] = [];
+      
+      if (recommendMode === 'mixed' && typeof mixedStep === 'number') {
+        // For mixed mode, alternate between cross-topic and in-depth
+        const isOdd = mixedStep % 2 === 1;
+        const crossCount = isOdd ? 3 : 2;
+        const inDepthCount = isOdd ? 2 : 3;
+        
+        // Get cross-topic prompts (horizontal)
+        const crossTopicRules = rules.filter(rule => rule.horizontal_prompts.length > 0).sort(() => 0.5 - Math.random());
+        const crossPrompts = crossTopicRules.slice(0, crossCount).map(rule => {
+          const numericPosition = rule.position.match(/^[\d.]+/)?.[0] || rule.position;
+          return `${numericPosition} ${rule.question}`;
+        });
+        
+        // Get in-depth prompts (vertical)
+        const inDepthRules = rules.filter(rule => rule.vertical_prompts.length > 0).sort(() => 0.5 - Math.random());
+        const inDepthPrompts = inDepthRules.slice(0, inDepthCount).map(rule => {
+          const numericPosition = rule.position.match(/^[\d.]+/)?.[0] || rule.position;
+          return `${numericPosition} ${rule.question}`;
+        });
+        
+        selectedPrompts = [...crossPrompts, ...inDepthPrompts];
+        console.log(`[DEBUG] LLM Mixed mode - step: ${mixedStep}, isOdd: ${isOdd}, cross: ${crossPrompts.length}, inDepth: ${inDepthPrompts.length}, total: ${selectedPrompts.length}`);
+      } else {
+        // For horizontal/vertical modes, use random recommendations
+        const allRules = rules.sort(() => 0.5 - Math.random());
+        selectedPrompts = allRules.slice(0, 5).map(rule => {
+          const numericPosition = rule.position.match(/^[\d.]+/)?.[0] || rule.position;
+          return `${numericPosition} ${rule.question}`;
+        });
+      }
       
       const answerPrompt = `Please provide a helpful answer to this Python question. Focus on being clear and educational:
 

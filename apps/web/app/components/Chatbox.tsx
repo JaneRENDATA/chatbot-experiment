@@ -307,77 +307,95 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
   };
 
   return (
-    <div className="w-full sm:w-[70vw] max-w-none mx-auto px-0 sm:px-4 flex flex-col bg-white sm:rounded-2xl sm:shadow sm:border sm:border-gray-200 sm:p-6 p-2">
-      {/* 推荐方式Tab切换 */}
-      <div className="flex flex-wrap w-full items-center mb-4 gap-2">
+    <div className="w-full sm:w-[70vw] max-w-none mx-auto flex flex-col bg-white sm:rounded-2xl sm:shadow-lg sm:border sm:border-gray-200 h-[90vh] sm:h-[95vh]">
+      {/* Control Panel */}
+      <div className="flex flex-col sm:flex-row w-full items-start sm:items-center gap-3 p-4 pb-4 border-b border-gray-200">
+        {/* Left side: Mode selection and display controls */}
+        <div className="flex flex-wrap items-center gap-2 flex-1">
+          {/* Mode Selection Group */}
+          <div className="flex items-center gap-2 mr-6">
+            <button
+              className={`px-6 py-3 rounded-lg border font-semibold transition duration-200 text-base
+                ${activeMode === 'horizontal'
+                  ? 'bg-green-500 text-white border-green-600 shadow-md'
+                  : 'bg-gray-100 text-green-700 border-green-300 hover:bg-green-50 hover:shadow-sm'}
+              `}
+              onClick={() => handleModeChange('horizontal')}
+              disabled={isLoading}
+            >
+              Cross-Topic
+            </button>
+            <button
+              className={`px-6 py-3 rounded-lg border font-semibold transition duration-200 text-base
+                ${activeMode === 'vertical'
+                  ? 'bg-blue-500 text-white border-blue-600 shadow-md'
+                  : 'bg-gray-100 text-blue-700 border-blue-300 hover:bg-blue-50 hover:shadow-sm'}
+              `}
+              onClick={() => handleModeChange('vertical')}
+              disabled={isLoading}
+            >
+              In-Depth
+            </button>
+            <button
+              className={`px-6 py-3 rounded-lg border font-semibold transition duration-200 text-base
+                ${activeMode === 'mixed'
+                  ? 'bg-purple-500 text-white border-purple-600 shadow-md'
+                  : 'bg-gray-100 text-purple-700 border-purple-300 hover:bg-purple-50 hover:shadow-sm'}
+              `}
+              onClick={() => handleModeChange('mixed')}
+              disabled={isLoading}
+            >
+              Mixed
+            </button>
+          </div>
+          
+          {/* Display Controls Group */}
+          <div className="flex items-center gap-1">
+            <button
+              className={`px-3 py-2 rounded-lg border transition duration-200 text-sm font-medium ${
+                showFollowUpAsText
+                  ? 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200 hover:shadow-sm'
+                  : 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200 hover:shadow-sm'
+              }`}
+              onClick={() => setShowFollowUpAsText(!showFollowUpAsText)}
+            >
+              {showFollowUpAsText ? 'Show as Buttons' : 'Show as Text'}
+            </button>
+            <button
+              className={`px-3 py-2 rounded-lg border transition duration-200 text-sm font-medium ${
+                showColors
+                  ? 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200 hover:shadow-sm'
+                  : 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200 hover:shadow-sm'
+              }`}
+              onClick={() => setShowColors(!showColors)}
+            >
+              {showColors ? 'Hide Colors' : 'Differentiate Colors'}
+            </button>
+          </div>
+        </div>
+        
+        {/* Right side: Utility buttons and prompt info */}
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-1">
         <button
-          className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
-            ${activeMode === 'horizontal'
-              ? 'bg-green-500 text-white border-green-600 shadow-md'
-              : 'bg-gray-100 text-green-700 border-green-300 hover:bg-green-50'}
-          `}
-          onClick={() => handleModeChange('horizontal')}
-          disabled={isLoading}
-        >
-          Cross-Topic
-        </button>
-        <button
-          className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
-            ${activeMode === 'vertical'
-              ? 'bg-blue-500 text-white border-blue-600 shadow-md'
-              : 'bg-gray-100 text-blue-700 border-blue-300 hover:bg-blue-50'}
-          `}
-          onClick={() => handleModeChange('vertical')}
-          disabled={isLoading}
-        >
-          In-Depth
-        </button>
-        <button
-          className={`flex-1 min-w-[80px] max-w-full px-3 py-1 rounded border font-medium transition duration-150
-            ${activeMode === 'mixed'
-              ? 'bg-purple-500 text-white border-purple-600 shadow-md'
-              : 'bg-gray-100 text-purple-700 border-purple-300 hover:bg-purple-50'}
-          `}
-          onClick={() => handleModeChange('mixed')}
-          disabled={isLoading}
-        >
-          Mixed
-        </button>
-        <button
-          className={`flex-1 min-w-[80px] max-w-full px-4 py-1 rounded border transition ${
-            showFollowUpAsText
-              ? 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200'
-              : 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
-          }`}
-          onClick={() => setShowFollowUpAsText(!showFollowUpAsText)}
-        >
-          {showFollowUpAsText ? 'Show as Buttons' : 'Show as Text'}
-        </button>
-        <button
-          className="flex-1 min-w-[80px] max-w-full px-4 py-1 rounded bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition"
+              className="px-3 py-2 rounded-lg bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition duration-200 text-sm font-medium"
           onClick={() => setShowClearConfirm(true)}
         >
           Clear History
         </button>
         <button
-          className="flex-1 min-w-[80px] max-w-full px-4 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition"
+              className="px-3 py-2 rounded-lg bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition duration-200 text-sm font-medium"
           onClick={() => { setTempPrompt(prompt); setShowPromptModal(true); }}
         >
           Edit Prompt
         </button>
-        <span className="ml-4 text-xs text-gray-400 truncate max-w-[60%]" title={prompt}>
+          </div>
+          <div className="flex-1 sm:flex-none">
+            <span className="text-xs text-gray-500 truncate max-w-full sm:max-w-[250px] block" title={prompt}>
           Current Prompt: {prompt}
         </span>
-        <button
-          className={`flex-1 min-w-[80px] max-w-full px-4 py-1 rounded border transition ${
-            showColors
-              ? 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200'
-              : 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200'
-          }`}
-          onClick={() => setShowColors(!showColors)}
-        >
-          {showColors ? 'Hide Colors' : 'Differentiate Colors'}
-        </button>
+          </div>
+        </div>
       </div>
       {/* Clear History Confirmation Modal */}
       {showClearConfirm && (
@@ -411,20 +429,20 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           </div>
         </div>
       )}
-      {/* 聊天内容渲染，渲染当前模式的messages */}
-      <div className="flex-1 overflow-y-auto mb-4">
+      {/* Chat Conversation Area */}
+      <div className="flex-1 overflow-y-auto p-4">
         {messages.map((msg, idx) => (
           <div
             key={msg.id}
             className={`mb-2 flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[80%] px-4 py-2 rounded-xl whitespace-pre-line break-words shadow-sm ${
+              className={`max-w-[80%] px-4 py-3 rounded-2xl whitespace-pre-line break-words shadow-sm ${
                 msg.isUser
-                  ? 'bg-blue-100 text-blue-900 rounded-br-none'
-                  : 'bg-gray-100 text-gray-900 rounded-bl-none'
+                  ? 'bg-blue-500 text-white rounded-br-md ml-auto'
+                  : 'bg-gray-200 text-gray-900 rounded-bl-md'
               }`}
-              style={{ lineHeight: 1 }}
+              style={{ lineHeight: 1.4 }}
             >
               {/* 用户消息为纯文本，AI消息为 markdown+代码块+loading动画 */}
               {msg.isUser ? (
@@ -537,9 +555,9 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
         <div ref={messagesEndRef} />
       </div>
       {/* Input area */}
-      <form onSubmit={handleSubmit} className="flex mt-2">
+      <form onSubmit={handleSubmit} className="flex p-4 border-t border-gray-200 bg-gray-50">
         <textarea
-          className="poe-input flex-1 mr-2"
+          className="flex-1 mr-3 px-4 py-3 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black placeholder-gray-500"
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Type your message..."
@@ -555,7 +573,7 @@ const Chatbox: React.FC<ChatboxProps> = ({ libId, fileName, scrapedUrl, role }) 
           }}
         />
         <button
-          className="poe-btn"
+          className="px-6 py-3 bg-blue-500 text-white rounded-2xl font-medium hover:bg-blue-600 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           type="submit"
           disabled={isLoading || !input.trim()}
         >
